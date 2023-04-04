@@ -1,0 +1,375 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:tcc_front/models/company.dart';
+import 'package:tcc_front/models/project.dart';
+import 'package:tcc_front/models/user.dart';
+
+import 'activity.dart';
+import 'list_users.dart';
+
+class Auth with ChangeNotifier {
+  var url = 'http://192.168.1.111:3000/api';
+  Map<String, String> requestHeadears = {'Content-Type': 'application/json'};
+  var user = User();
+
+  Future<void> singup(String email, String password, String confirmPassword,
+      String name) async {
+    try {
+      var response = await http
+          .post(Uri.parse('$url/users'),
+              body: jsonEncode(
+                {
+                  "email": email,
+                  "password": password,
+                  "name": name,
+                  "password_confirmation": confirmPassword
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          print('Usuário cadastrado com sucesso!');
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print('erro: $e');
+    }
+  }
+
+  Future login(String email, String password) async {
+    try {
+      var response = await http
+          .post(Uri.parse('$url/login'),
+              body: jsonEncode(
+                {"email": email, "password": password},
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          //id,email,name,working,created_at,updated_at,avatar,avatar_url,token,refresh_token
+
+          user.id = jsonDecode(response.body)['user']['id'].toString();
+          user.email = jsonDecode(response.body)['user']['email'].toString();
+          user.name = jsonDecode(response.body)['user']['name'].toString();
+          user.working =
+              jsonDecode(response.body)['user']['working'].toString();
+          user.created_at =
+              jsonDecode(response.body)['user']['created_at'].toString();
+          user.updated_at =
+              jsonDecode(response.body)['user']['updated_at'].toString();
+          user.avatar = jsonDecode(response.body)['user']['avatar'].toString();
+          user.avatar_url =
+              jsonDecode(response.body)['user']['avatar_url'].toString();
+          user.token = jsonDecode(response.body)['token'].toString();
+          user.refresh_token =
+              jsonDecode(response.body)['refresh_token'].toString();
+          user.error_message = '';
+        } else {
+          user.error_message = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      user.error_message = e.toString();
+    }
+    return user;
+  }
+
+  Future companySingup(
+      String fantasyName, String cnpj, String tolkienUser) async {
+    var errorMessage = '';
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tolkienUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/company'),
+              body: jsonEncode(
+                {
+                  "fantasia": fantasyName,
+                  "cnpj_cpf": cnpj,
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+        } else {
+          errorMessage = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+    return (errorMessage);
+  }
+
+  Future<User> fetchCompanies(String tokenUser) async {
+    user.company_list.clear();
+    List<CompanyInfo> companiesList;
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/user-companies'), headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body) as List;
+
+          companiesList = responseJson
+              .map((tagJson) => CompanyInfo.fromJson(tagJson))
+              .toList();
+          for (int i = 0; i < companiesList.length; i++) {
+            user.company_list.add(companiesList[i]);
+          }
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print('erro: $e');
+    }
+    return user;
+  }
+
+  Future<String> addUserCompany(
+      String tokenUser, String userId, String companyId) async {
+    String resposta = "";
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/company-users/$companyId'),
+              body: jsonEncode(
+                {
+                  "newUserId": userId,
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+        } else {
+          resposta = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+
+  Future<List<UserList>> companyUsersList(
+      String tokenUser, String companyId) async {
+    List<UserList> usersList = [];
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/company-users/$companyId'),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body) as List;
+
+          usersList = responseJson
+              .map((tagJson) => UserList.fromJson(tagJson))
+              .toList();
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print("erro: $e");
+    }
+    return usersList;
+  }
+
+  Future projectSingup(String projectName, String description,
+      String tolkienUser, String companyId) async {
+    var errorMessage = '';
+
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tolkienUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/projects'),
+              body: jsonEncode(
+                {
+                  "name": projectName,
+                  "description": description,
+                  "companyId": companyId,
+                  "users": []
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          print("Projeto Cadastrado com Sucesso!");
+        } else {
+          errorMessage = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+    return (errorMessage);
+  }
+
+  Future<User> fetchProjects(String tokenUser) async {
+    user.projectsList.clear();
+    List<ProjectInfo> projectsList;
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/projects'), headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body) as List;
+
+          projectsList = responseJson
+              .map((tagJson) => ProjectInfo.fromJson(tagJson))
+              .toList();
+          for (int i = 0; i < projectsList.length; i++) {
+            user.projectsList.add(projectsList[i]);
+          }
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print('erro: $e');
+    }
+    return user;
+  }
+
+  Future<String> addUserProject(
+      String tokenUser, int userId, String projectId, String companyId) async {
+    String resposta = "";
+    List<int> usersIds = [];
+    usersIds.add(userId);
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/user-projects/$projectId'),
+              body: jsonEncode(
+                {"users": usersIds, "companyId": companyId},
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+        } else {
+          resposta = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+
+  Future<List<User>> projectUsersList(
+      String tokenUser, String projectId) async {
+    List<User> usersList = [];
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/user-projects/$projectId'),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body) as List;
+
+          usersList = responseJson
+              .map((tagJson) => User.fromJson(tagJson))
+              .toList();
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print("erro: $e");
+    }
+    return usersList;
+  }
+
+  Future activitySingup(String activityName, String description,
+      String tokenUser, String projectId) async {
+    var errorMessage = '';
+
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/activities'),
+              body: jsonEncode(
+                {
+                  "activity": activityName,
+                  "description": description,
+                  "projectId": projectId,
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+        } else {
+          errorMessage = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+    return (errorMessage);
+  }
+
+  Future<User> fetchActivities(String tokenUser) async {
+    user.activitiesList.clear();
+    List<Activity> activitiesList;
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/activities'), headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body)['data'] as List;
+
+          activitiesList = responseJson
+              .map((tagJson) => Activity.fromJson(tagJson))
+              .toList();
+          for (int i = 0; i < activitiesList.length; i++) {
+            user.activitiesList.add(activitiesList[i]);
+          }
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print('erro: $e');
+    }
+    return user;
+  }
+}
