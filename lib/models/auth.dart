@@ -10,7 +10,7 @@ import 'activity.dart';
 import 'list_users.dart';
 
 class Auth with ChangeNotifier {
-  var url = 'http://192.168.15.23:3000/api';
+  var url = 'https://apitcc.brunodev.software/api';
   Map<String, String> requestHeadears = {'Content-Type': 'application/json'};
   var user = User();
 
