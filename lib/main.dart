@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tcc_front/models/auth.dart';
-import 'package:tcc_front/screens/activity_screen.dart';
+import 'package:tcc_front/screens/activities_screens/activity_screen.dart';
+import 'package:tcc_front/screens/activities_screens/activity_user_list_screen.dart';
+import 'package:tcc_front/screens/activities_screens/add_activity_screen.dart';
 import 'package:tcc_front/screens/company_screens/add_user_to_company_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_users_list_screen.dart';
@@ -40,7 +42,9 @@ class MyApp extends StatelessWidget {
           AppRoutes.COMPANYUSERSLIST: (ctx) => CompanyUsersList(),
           AppRoutes.ADDUSERTOPROJECTSCREEN: (ctx) => AddUserToProject(),
           AppRoutes.PROJECTUSERSLIST: (ctx) => ProjectUsersList(),
-          AppRoutes.ACTIVITYSCREEN: (ctx) => ActivityScreen()
+          AppRoutes.ACTIVITYSCREEN: (ctx) => ActivityScreen(),
+          AppRoutes.ADDACTIVITYSCREEN: (ctx) => NewActivityScreen(),
+          AppRoutes.ACTIVITYUSERLIST: (ctx) => ActivityUserList()
         },
       ),
     );
