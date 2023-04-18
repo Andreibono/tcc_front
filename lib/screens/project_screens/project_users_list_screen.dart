@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../components/app_bar_custom.dart';
-import '../models/auth.dart';
-import '../models/user.dart';
+import '/components/app_bar_custom.dart';
+import '/models/auth.dart';
+import '/models/user.dart';
 
 class ProjectUsersList extends StatefulWidget {
   ProjectUsersList({Key? key}) : super(key: key);

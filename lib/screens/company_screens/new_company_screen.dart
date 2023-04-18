@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_front/components/app_bar_custom.dart';
 
-import '../components/company_form.dart';
-import '../models/user.dart';
+import '/components/company_form.dart';
 
 class NewCompanyScreen extends StatelessWidget {
   //const NewCompany({Key? key}) : super(key: key);

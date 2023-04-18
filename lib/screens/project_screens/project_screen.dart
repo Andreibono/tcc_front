@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_front/components/app_bar_custom.dart';
 
-import '../models/user.dart';
-import '../util/app_routes.dart';
+import '/models/user.dart';
+import '/util/app_routes.dart';
 
 class ProjectScreen extends StatelessWidget {
   const ProjectScreen({Key? key}) : super(key: key);

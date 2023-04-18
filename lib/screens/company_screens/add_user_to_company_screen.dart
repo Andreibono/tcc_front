@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../components/app_bar_custom.dart';
-import '../models/auth.dart';
-import '../models/user.dart';
+import '/components/app_bar_custom.dart';
+import '/models/auth.dart';
+import '/models/user.dart';
 
-class AddUserToProject extends StatefulWidget {
+class AddUserToCompany extends StatefulWidget {
   @override
-  State<AddUserToProject> createState() => _AddUserToProjectState();
+  State<AddUserToCompany> createState() => _AddUserToCompanyState();
 }
 
-class _AddUserToProjectState extends State<AddUserToProject> {
+class _AddUserToCompanyState extends State<AddUserToCompany> {
   bool buttomCheck = false;
-  String? projectSelected;
-  int projectSelectedIndex = -1;
+  String? companySelected;
+  int companySelectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,6 @@ class _AddUserToProjectState extends State<AddUserToProject> {
         ));
 
     final user = ModalRoute.of(context)!.settings.arguments as User;
-
-    List<String> userProjects = [];
-    for (int i = 0; i < user.projectsList.length; i++) {
-      userProjects.add(user.projectsList[i].project.name);
-    }
-
     List<String> userCompanies = [];
     for (int i = 0; i < user.company_list.length; i++) {
       userCompanies.add(user.company_list[i].company.fantasy);
@@ -50,18 +44,17 @@ class _AddUserToProjectState extends State<AddUserToProject> {
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.addUserProject(
+      var resposta = await auth.addUserCompany(
           user.token.toString(),
-          int.parse(_authData['newUserId']!),
-          user.projectsList[projectSelectedIndex].project.id,
-          user.projectsList[projectSelectedIndex].project.companyProj.id);
+          _authData['newUserId']!,
+          user.company_list[companySelectedIndex].company.id);
       print('resposta: $resposta');
       if (resposta == '') {
         //usuário adicionado com sucesso
         print('Usuário adicionado com Sucesso!');
       } else {
         //tratamento de erro ao adicionar usuário a uma empresa
-        print(resposta);
+        print (resposta);
       }
     }
 
@@ -79,13 +72,13 @@ class _AddUserToProjectState extends State<AddUserToProject> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12)),
                 child: DropdownButton<String>(
-                  value: projectSelected,
-                  items: userProjects.map(buildMenuItem).toList(),
+                  value: companySelected,
+                  items: userCompanies.map(buildMenuItem).toList(),
                   onChanged: (value) => setState(() {
-                    projectSelected = value;
+                    companySelected = value;
                     buttomCheck = true;
-                    projectSelectedIndex =
-                        userProjects.indexOf(projectSelected!);
+                    companySelectedIndex =
+                        userCompanies.indexOf(companySelected!);
                   }),
                 ),
               ),
@@ -98,8 +91,7 @@ class _AddUserToProjectState extends State<AddUserToProject> {
                         labelText: 'Id do Usuário',
                         labelStyle: TextStyle(color: Colors.lightBlue),
                         contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                    onSaved: (newUserId) =>
-                        _authData['newUserId'] = newUserId ?? '',
+                    onSaved: (newUserId) => _authData['newUserId'] = newUserId ?? '',
                     validator: (_newUserId) {
                       final newUserId = _newUserId ?? '';
                       if (newUserId == '') {
