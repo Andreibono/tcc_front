@@ -14,8 +14,6 @@ class _AddUserToProjectState extends State<AddUserToProject> {
   bool buttomCheck = false;
   String? projectSelected;
   int projectSelectedIndex = -1;
-  String? companySelected;
-  int companySelectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,7 @@ class _AddUserToProjectState extends State<AddUserToProject> {
           user.token.toString(),
           int.parse(_authData['newUserId']!),
           user.projectsList[projectSelectedIndex].project.id,
-          user.company_list[companySelectedIndex].company.id);
+          user.projectsList[projectSelectedIndex].project.companyProj.id);
       print('resposta: $resposta');
       if (resposta == '') {
         //usuário adicionado com sucesso
@@ -76,21 +74,6 @@ class _AddUserToProjectState extends State<AddUserToProject> {
           key: _formKey,
           child: Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12)),
-                child: DropdownButton<String>(
-                  value: companySelected,
-                  items: userCompanies.map(buildMenuItem).toList(),
-                  onChanged: (value) => setState(() {
-                    companySelected = value;
-                    buttomCheck = true;
-                    companySelectedIndex =
-                        userCompanies.indexOf(companySelected!);
-                  }),
-                ),
-              ),
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,

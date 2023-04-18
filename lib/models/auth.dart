@@ -238,7 +238,7 @@ class Auth with ChangeNotifier {
           .get(Uri.parse('$url/projects'), headers: requestHeadears)
           .then((response) {
         if (response.statusCode == 200) {
-          var responseJson = json.decode(response.body) as List;
+          var responseJson = json.decode(response.body)['data'] as List;
 
           projectsList = responseJson
               .map((tagJson) => ProjectInfo.fromJson(tagJson))
