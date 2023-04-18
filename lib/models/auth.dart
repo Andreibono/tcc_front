@@ -10,7 +10,7 @@ import 'activity.dart';
 import 'list_users.dart';
 
 class Auth with ChangeNotifier {
-  var url = 'http://192.168.1.111:3000/api';
+  var url = 'http://192.168.15.23:3000/api';
   Map<String, String> requestHeadears = {'Content-Type': 'application/json'};
   var user = User();
 
@@ -43,7 +43,7 @@ class Auth with ChangeNotifier {
   Future login(String email, String password) async {
     try {
       var response = await http
-          .post(Uri.parse('$url/login'),
+          .post(Uri.parse('$url/session/login'),
               body: jsonEncode(
                 {"email": email, "password": password},
               ),
@@ -52,18 +52,18 @@ class Auth with ChangeNotifier {
         if (response.statusCode == 200) {
           //id,email,name,working,created_at,updated_at,avatar,avatar_url,token,refresh_token
 
-          user.id = jsonDecode(response.body)['user']['id'].toString();
-          user.email = jsonDecode(response.body)['user']['email'].toString();
-          user.name = jsonDecode(response.body)['user']['name'].toString();
+          user.id = jsonDecode(response.body)['userRes']['id'].toString();
+          user.email = jsonDecode(response.body)['userRes']['email'].toString();
+          user.name = jsonDecode(response.body)['userRes']['name'].toString();
           user.working =
-              jsonDecode(response.body)['user']['working'].toString();
+              jsonDecode(response.body)['userRes']['working'].toString();
           user.created_at =
-              jsonDecode(response.body)['user']['created_at'].toString();
+              jsonDecode(response.body)['userRes']['created_at'].toString();
           user.updated_at =
-              jsonDecode(response.body)['user']['updated_at'].toString();
-          user.avatar = jsonDecode(response.body)['user']['avatar'].toString();
+              jsonDecode(response.body)['userRes']['updated_at'].toString();
+          user.avatar = jsonDecode(response.body)['userRes']['avatar'].toString();
           user.avatar_url =
-              jsonDecode(response.body)['user']['avatar_url'].toString();
+              jsonDecode(response.body)['userRes']['avatar_url'].toString();
           user.token = jsonDecode(response.body)['token'].toString();
           user.refresh_token =
               jsonDecode(response.body)['refresh_token'].toString();
