@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../components/app_bar_custom.dart';
-import '../../components/dialog.dart';
 import '../../models/user.dart';
+import '../../util/DialogUtils.dart';
 import '../../util/app_routes.dart';
 
 class ActivityUserList extends StatelessWidget {
@@ -24,7 +24,8 @@ class ActivityUserList extends StatelessWidget {
                   onTap: () {
                     user.open_activity = user.activitiesList[index].id;
                     user.activitiesList[index].status
-                        ? AlertDialogCustom(text: 'Atividade já encerrada!')
+                        ? DialogUtils.showCustomDialog(context,
+                          title: "Erro", content: "Atividade já foi encerrada!")
                         : Navigator.of(context).pushNamed(
                             AppRoutes.ACTIVITYREPORT,
                             arguments: user);

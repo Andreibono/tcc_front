@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tcc_front/components/dialog.dart';
 import 'package:tcc_front/models/user.dart';
 
 import '../models/auth.dart';

@@ -17,7 +17,23 @@ class DrawerCustom extends StatelessWidget {
         ),
       );
 
-  Widget buildHeader(BuildContext context) => Container();
+  Widget buildHeader(BuildContext context) => Material(
+      color: Colors.blue.shade700,
+      child: InkWell(onTap: (){
+        //navegação para a tela do usuário
+      },
+      child: Container(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 24),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 52,
+            backgroundColor: Colors.grey,
+          ),
+          Text(user.name, style: TextStyle(fontSize: 28, color: Colors.white)),
+          Text(user.email, style: TextStyle(fontSize: 16, color: Colors.white))
+        ],
+      ))));
 
   Widget buildMenuItems(BuildContext context) => Container(
         padding: EdgeInsets.all(30),
@@ -32,8 +48,9 @@ class DrawerCustom extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
 
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(AppRoutes.HOME, (route) => false, arguments: user);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.HOME, (route) => false,
+                    arguments: user);
               },
             ),
             ListTile(

@@ -115,7 +115,7 @@ class ActivityReportScreen extends StatelessWidget {
                       validator: (_difficulty) {
                         final difficulty = _difficulty ?? '';
                         if (difficulty == '') {
-                          return 'Descreva as suas dificuldades durante a atividade realizzada.';
+                          return 'Descreva as suas dificuldades durante a atividade realizada.';
                         }
                         return null;
                       },
