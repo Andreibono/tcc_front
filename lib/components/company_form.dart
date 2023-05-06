@@ -4,6 +4,7 @@ import 'package:tcc_front/models/company.dart';
 
 import '../models/auth.dart';
 import '../models/user.dart';
+import '../util/DialogUtils.dart';
 
 class CompanyForm extends StatefulWidget {
   const CompanyForm({Key? key}) : super(key: key);
@@ -36,12 +37,12 @@ class CompanyFormState extends State<CompanyForm> {
           _authData['fantasyName']!, _authData['CNPJ']!, user.token.toString());
       print('resposta: $resposta');
       if (resposta == '') {
-        print('Empresa Cadastrada com Sucesso!');
         //empresa cadastrada com sucesso
-        
+        DialogUtils.showCustomDialog(context, title: "Sucesso", content: "Empresa Cadastrada com Sucesso!");
         
       } else {
         //tratamento de erro ao cadastrar empresa
+        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
       }
     }
 

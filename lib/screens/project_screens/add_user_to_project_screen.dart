@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../util/DialogUtils.dart';
 import '/components/app_bar_custom.dart';
 import '/models/auth.dart';
 import '/models/user.dart';
@@ -58,10 +59,10 @@ class _AddUserToProjectState extends State<AddUserToProject> {
       print('resposta: $resposta');
       if (resposta == '') {
         //usuário adicionado com sucesso
-        print('Usuário adicionado com Sucesso!');
+        DialogUtils.showCustomDialog(context, title: "Sucesso", content: "Usuário adicionado com Sucesso!");
       } else {
         //tratamento de erro ao adicionar usuário a uma empresa
-        print(resposta);
+        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
       }
     }
 

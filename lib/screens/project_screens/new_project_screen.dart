@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../util/DialogUtils.dart';
 import '/components/app_bar_custom.dart';
 import '/models/auth.dart';
 import '/models/user.dart';
@@ -50,12 +51,12 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
           _authData['description']!,
           user.token.toString(),
           user.company_list[companySelectedIndex].company.id);
-      print('resposta: $resposta');
       if (resposta == '') {
         //projeto cadastrado com sucesso
-        print('Projeto Cadastrado com Sucesso!');
+        DialogUtils.showCustomDialog(context, title: "Erro", content: 'Projeto Cadastrado com Sucesso!');
       } else {
         //tratamento de erro ao cadastrar projeto
+        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
       }
     }
 

@@ -2,7 +2,7 @@ class Activity {
   var id;
   var activity;
   var description;
-  var status;
+  bool status;
   var start;
   var end;
   var created_at;
@@ -12,7 +12,7 @@ class Activity {
       {this.id,
       this.activity,
       this.description,
-      this.status,
+      required this.status,
       this.start,
       this.end,
       this.created_at,
@@ -23,7 +23,7 @@ class Activity {
           id: json['id'].toString(),
           activity: json['activity'].toString(),
           description: json['description'].toString(),
-          status: json['status'].toString(),
+          status: json['status'],
           start: json['start'].toString(),
           end: json['end'].toString(),
           created_at: json['created_at'].toString(),

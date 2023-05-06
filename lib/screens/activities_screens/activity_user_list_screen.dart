@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../components/app_bar_custom.dart';
+import '../../components/dialog.dart';
 import '../../models/user.dart';
+import '../../util/app_routes.dart';
 
 class ActivityUserList extends StatelessWidget {
   const ActivityUserList({Key? key}) : super(key: key);
@@ -18,15 +20,28 @@ class ActivityUserList extends StatelessWidget {
             itemCount: user.activitiesList.length,
             itemBuilder: (BuildContext context, int index) {
               return Card(
-                child: Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Usuário: ${user.name}"),
-                      Text('Atividade: ${user.activitiesList[index].activity}'),
-                      Text('Status: ${user.activitiesList[index].status}')
-                    ],
+                child: InkWell(
+                  onTap: () {
+                    user.open_activity = user.activitiesList[index].id;
+                    user.activitiesList[index].status
+                        ? AlertDialogCustom(text: 'Atividade já encerrada!')
+                        : Navigator.of(context).pushNamed(
+                            AppRoutes.ACTIVITYREPORT,
+                            arguments: user);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Usuário: ${user.name}"),
+                        Text(
+                            'Atividade: ${user.activitiesList[index].activity}'),
+                        Text('Status: ${user.activitiesList[index].status}'),
+                        Text(
+                            'Horário de criação: ${user.activitiesList[index].start}')
+                      ],
+                    ),
                   ),
                 ),
               );

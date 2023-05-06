@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tcc_front/components/dialog.dart';
 import 'package:tcc_front/models/user.dart';
 
 import '../models/auth.dart';
+import '../util/DialogUtils.dart';
 import '../util/app_routes.dart';
 
 enum AuthMode { Signup, Login }
@@ -81,7 +83,11 @@ class _AuthFormState extends State<AuthForm> {
             arguments: user);
       } else {
         //tratamento de erro
-        print('erro: ' + user.error_message);
+        
+        DialogUtils.showCustomDialog(context,
+          title: "Erro",
+          content: user.error_message);
+
       }
     } else {
       await auth.singup(_authData['email']!, _authData['password']!,

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../components/app_bar_custom.dart';
 import '../../models/auth.dart';
 import '../../models/user.dart';
+import '../../util/DialogUtils.dart';
 
 class NewActivityScreen extends StatefulWidget {
   @override
@@ -55,6 +56,8 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
         //Atividade cadastrada com sucesso
         print('Atividade Cadastrada com Sucesso!');
       } else {
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: resposta);
         //tratamento de erro ao cadastrar uma nova atividade
       }
     }

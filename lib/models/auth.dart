@@ -61,7 +61,8 @@ class Auth with ChangeNotifier {
               jsonDecode(response.body)['userRes']['created_at'].toString();
           user.updated_at =
               jsonDecode(response.body)['userRes']['updated_at'].toString();
-          user.avatar = jsonDecode(response.body)['userRes']['avatar'].toString();
+          user.avatar =
+              jsonDecode(response.body)['userRes']['avatar'].toString();
           user.avatar_url =
               jsonDecode(response.body)['userRes']['avatar_url'].toString();
           user.token = jsonDecode(response.body)['token'].toString();
@@ -299,9 +300,8 @@ class Auth with ChangeNotifier {
         if (response.statusCode == 200) {
           var responseJson = json.decode(response.body) as List;
 
-          usersList = responseJson
-              .map((tagJson) => User.fromJson(tagJson))
-              .toList();
+          usersList =
+              responseJson.map((tagJson) => User.fromJson(tagJson)).toList();
         } else {
           print(jsonDecode(response.body).toString());
         }
@@ -371,5 +371,40 @@ class Auth with ChangeNotifier {
       print('erro: $e');
     }
     return user;
+  }
+
+  Future<String> sendReport(String iDid, String willDo, String difficulty,
+      String activity, String end, String tokenUser) async {
+    String resposta = '';
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/reports'),
+              body: jsonEncode(
+                {
+                  "end": end,
+                  "activity": activity,
+                  "report": {
+                    "iDid": iDid,
+                    "willDo": willDo,
+                    "difficulty": difficulty,
+                  }
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          return resposta;
+        } else {
+          resposta = (jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      resposta = ('erro: $e');
+    }
+    return resposta;
   }
 }
