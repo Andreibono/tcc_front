@@ -407,4 +407,29 @@ class Auth with ChangeNotifier {
     }
     return resposta;
   }
+
+  Future<String> putWorking(
+      String tokenUser) async {
+    String resposta = "";
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .put(Uri.parse('$url/working'),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          print("Usuário começou a trabalhar");
+        } else {
+          resposta = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+  
 }

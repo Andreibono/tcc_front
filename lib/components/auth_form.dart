@@ -76,6 +76,7 @@ class _AuthFormState extends State<AuthForm> {
 
         //get das atividades do Usuário
         user = await auth.fetchActivities(user.token);
+        
 
         Navigator.of(context).pushNamedAndRemoveUntil(
             AppRoutes.HOME, (route) => false,

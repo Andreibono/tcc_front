@@ -4,6 +4,7 @@ import 'package:tcc_front/components/app_bar_custom.dart';
 
 import '../../models/auth.dart';
 import '../../models/user.dart';
+import '../../util/DialogUtils.dart';
 
 class ActivityReportScreen extends StatelessWidget {
   const ActivityReportScreen({Key? key, int? index}) : super(key: key);
@@ -20,15 +21,28 @@ class ActivityReportScreen extends StatelessWidget {
     };
 
     String time() {
-      //int index = user.open_activity;
+      int index = user.activitiesList.indexWhere((activitiesList) => activitiesList.id == user.open_activity );
       //user.activitiesList[index].
-      int timestamp = DateTime.now().millisecondsSinceEpoch;
-      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      return tsdate.hour.toString() +
+
+      var activitytime =
+          DateTime.parse(user.activitiesList.elementAt(index).created_at);
+      var timeatual = DateTime.now();
+      var tempogasto2 = timeatual.difference(activitytime);
+      print(
+          "nome: ${user.activitiesList[index].activity} tempo gasto:${tempogasto2.inMinutes}");
+      
+      var horas = tempogasto2.inHours;
+      var minute = tempogasto2.inMinutes % 60;
+      var seconds = tempogasto2.inSeconds % 60;
+
+      print(
+          "hoars:${horas.floor()}  minutos:${minute.floor()}  segundos:${seconds.floor()}");
+
+      return (horas < 10 ? '0' + horas.toString() : horas.toString()) +
           ":" +
-          tsdate.minute.toString() +
+          (minute < 10 ? '0' + minute.toString() : minute.toString()) +
           ":" +
-          tsdate.second.toString();
+          (seconds < 10 ? '0' + seconds.toString() : seconds.toString());
     }
 
     Future<void> submit() async {
@@ -40,20 +54,20 @@ class ActivityReportScreen extends StatelessWidget {
       }
       _formKey.currentState?.save();
 
-      print(time());
       var resposta = await auth.sendReport(
           _authData['iDid']!,
           _authData['willDo']!,
           _authData['difficulty']!,
           user.open_activity.toString(),
-          "01:05:44",
+          time(),
           user.token.toString());
       if (resposta == '') {
-        print('Relatório enviado com sucesso!');
         //empresa cadastrada com sucesso
+        DialogUtils.showCustomDialog(context,
+            title: "Sucesso!", content: "Relatório enviado com sucesso!");
       } else {
-        print (resposta);
         //tratamento de erro ao enviar relatório
+        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
       }
     }
 

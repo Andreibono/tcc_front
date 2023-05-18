@@ -54,7 +54,9 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       print('resposta: $resposta');
       if (resposta == '') {
         //Atividade cadastrada com sucesso
-        print('Atividade Cadastrada com Sucesso!');
+        await auth.putWorking(user.token);
+        DialogUtils.showCustomDialog(context, title: "Sucesso", content: "Atividade Iniciada, Bom Trabalho!");
+
       } else {
         DialogUtils.showCustomDialog(context,
             title: "Erro", content: resposta);
