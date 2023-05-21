@@ -17,6 +17,7 @@ class User {
   var refresh_token;
   var error_message;
   var open_activity;
+  var password;
   List <CompanyInfo> company_list =[];
   List<ProjectInfo> projectsList = [];
   List<Activity> activitiesList =[];
@@ -33,7 +34,8 @@ class User {
       @required this.token,
       this.refresh_token,
       this.error_message = '',
-      this.open_activity = 0
+      this.open_activity = 0,
+      this.password,
       });
       
       factory User.fromJson(Map json) {

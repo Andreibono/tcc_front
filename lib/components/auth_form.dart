@@ -67,6 +67,7 @@ class _AuthFormState extends State<AuthForm> {
       User user = User();
       user = await auth.login(_authData['email']!, _authData['password']!);
       if (user.error_message == '') {
+        user.password = _authData['password'];
         //login com sucesso
         // get das Empresas do Usuário
         user = await auth.fetchCompanies(user.token);

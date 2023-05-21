@@ -22,14 +22,11 @@ class ActivityReportScreen extends StatelessWidget {
 
     String time() {
       int index = user.activitiesList.indexWhere((activitiesList) => activitiesList.id == user.open_activity );
-      //user.activitiesList[index].
 
       var activitytime =
           DateTime.parse(user.activitiesList.elementAt(index).created_at);
       var timeatual = DateTime.now();
       var tempogasto2 = timeatual.difference(activitytime);
-      print(
-          "nome: ${user.activitiesList[index].activity} tempo gasto:${tempogasto2.inMinutes}");
       
       var horas = tempogasto2.inHours;
       var minute = tempogasto2.inMinutes % 60;
