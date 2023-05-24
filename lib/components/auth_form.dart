@@ -52,21 +52,8 @@ class _AuthFormState extends State<AuthForm> {
     });
   }
 
-  Future<void> _submit() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-
-    if (!isValid) {
-      return;
-    }
-    setState(() => _isLoading = true);
-
-    _formKey.currentState?.save();
-    Auth auth = Provider.of(context, listen: false);
-
-    if (_isLogin()) {
-      User user = User();
-      user = await auth.login(_authData['email']!, _authData['password']!);
-      if (user.error_message == '') {
+  Future<void> _setUserInformationFromLogin (User user, Auth auth) async {
+    if (user.error_message == '') {
         user.password = _authData['password'];
         //login com sucesso
         // get das Empresas do Usuário
@@ -83,20 +70,39 @@ class _AuthFormState extends State<AuthForm> {
             AppRoutes.HOME, (route) => false,
             arguments: user);
       } else {
-        //tratamento de erro
-        
+        //tratamento de erro 
         DialogUtils.showCustomDialog(context,
           title: "Erro",
           content: user.error_message);
-
       }
+  }
+
+  Future<void> _submit() async {
+    final isValid = _formKey.currentState?.validate() ?? false;
+
+    if (!isValid) {
+      return;
+    }
+    setState(() => _isLoading = true);
+
+    _formKey.currentState?.save();
+    Auth auth = Provider.of(context, listen: false);
+
+    User user = User();
+    if (_isLogin()) {
+      user = await auth.login(_authData['email']!, _authData['password']!);
+      await _setUserInformationFromLogin(user, auth);
+
     } else {
       await auth.singup(_authData['email']!, _authData['password']!,
           _authData['confirmPassword']!, _authData['name']!);
+      user = await auth.login(_authData['email']!, _authData['password']!);
+      await _setUserInformationFromLogin(user, auth);
     }
 
     setState(() => _isLoading = false);
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -18,9 +18,11 @@ class CompanyScreen extends StatelessWidget {
             'Cadastrar uma Nova Empresa',
             style: TextStyle(color: Colors.white),
           ),
+          tileColor: 
+          Colors.blue,
           onTap: () {
             Navigator.pop(context);
-
+        
             Navigator.of(context)
                 .pushNamed(AppRoutes.NEWCOMPANY, arguments: user);
           },
