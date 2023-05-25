@@ -112,7 +112,6 @@ class _AuthFormState extends State<AuthForm> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Container(
           padding: const EdgeInsets.all(16),
-          height: _isLogin() ? 320 : 430,
           width: deviceSize.width * 0.75,
           child: Form(
               key: _formKey,
@@ -181,7 +180,6 @@ class _AuthFormState extends State<AuthForm> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 30, vertical: 8)),
                     ),
-                  Spacer(),
                   TextButton(
                       onPressed: _switchAuthMode,
                       child: Text(_isLogin()
