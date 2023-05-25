@@ -21,6 +21,7 @@ class LoginScreen extends StatelessWidget {
             height: avaibleHeight * 0.3,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container (
                   width: 100,
