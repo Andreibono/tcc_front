@@ -13,7 +13,15 @@ class ActivityScreen extends StatelessWidget {
     var check = user.activitiesList.isEmpty ? false : true;
     
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(
+        title: 'Atividades',
+        onTapFunction: () {
+            Navigator.pop(context);
+
+            Navigator.of(context)
+                .pushNamed(AppRoutes.ADDACTIVITYSCREEN, arguments: user);
+          }
+      ),
       body: Column(children: [
         Visibility(
           visible: check,

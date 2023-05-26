@@ -11,7 +11,12 @@ class CompanyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as User;
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(title: "Empresa", onTapFunction: () {
+            Navigator.pop(context);
+            Navigator.of(context)
+                .pushNamed(AppRoutes.NEWCOMPANY, arguments: user);
+          }
+        ),
       body: Column(children: [
         ListTile(
           title: Text(

@@ -11,7 +11,15 @@ class ProjectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as User;
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(
+        title:'Projetos' ,
+        onTapFunction: () {
+            Navigator.pop(context);
+
+            Navigator.of(context)
+                .pushNamed(AppRoutes.NEWPROJECTSCREEN, arguments: user);
+          }
+      ),
       body: Column(children: [
         ListTile(
           title: Text(
