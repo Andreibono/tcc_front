@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 
 class AppBarCustom extends AppBar {
-  AppBarCustom({title = '', onTapFunction})
+  AppBarCustom({
+    title = '', 
+    onTapFunction,
+    working = 'true'})
       : super(
-          title: Text(title),
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: working == 'true' ? Colors.green : Colors.red,
+                radius: 20,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 18,
+                  child: Text(
+                    title[0].toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.black
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(title),
+              ),
+            ],
+          ),
           actions: [
              Padding(
                padding: const EdgeInsets.only(right: 15),
