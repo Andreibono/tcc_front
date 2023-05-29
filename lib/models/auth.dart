@@ -97,7 +97,7 @@ class Auth with ChangeNotifier {
               ),
               headers: requestHeadears)
           .then((response) {
-        if (response.statusCode == 200) {
+        if (response.statusCode == 201) {
         } else {
           errorMessage = jsonDecode(response.body).toString();
         }
@@ -215,7 +215,7 @@ class Auth with ChangeNotifier {
               ),
               headers: requestHeadears)
           .then((response) {
-        if (response.statusCode == 200) {
+        if (response.statusCode == 201) {
           print("Projeto Cadastrado com Sucesso!");
         } else {
           errorMessage = jsonDecode(response.body).toString();

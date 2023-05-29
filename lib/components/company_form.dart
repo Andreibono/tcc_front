@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tcc_front/models/company.dart';
 
 import '../models/auth.dart';
 import '../models/user.dart';
 import '../util/DialogUtils.dart';
 
 class CompanyForm extends StatefulWidget {
-  const CompanyForm({Key? key}) : super(key: key);
+  final User user;
+  const CompanyForm({required this.user, Key? key}) : super(key: key);
 
   @override
   State<CompanyForm> createState() => CompanyFormState();
 }
 
 class CompanyFormState extends State<CompanyForm> {
+  static final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    var user = ModalRoute.of(context)!.settings.arguments as User;
-
     Map<String, String> _authData = {
       'fantasyName': '',
       'CNPJ': '',
     };
 
     Future<void> submit() async {
-
       final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
 
@@ -33,13 +30,13 @@ class CompanyFormState extends State<CompanyForm> {
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.companySingup(
-          _authData['fantasyName']!, _authData['CNPJ']!, user.token.toString());
+      var resposta = await auth.companySingup(_authData['fantasyName']!,
+          _authData['CNPJ']!, widget.user.token.toString());
       print('resposta: $resposta');
       if (resposta == '') {
         //empresa cadastrada com sucesso
-        DialogUtils.showCustomDialog(context, title: "Sucesso", content: "Empresa Cadastrada com Sucesso!");
-        
+        DialogUtils.showCustomDialog(context,
+            title: "Sucesso", content: "Empresa Cadastrada com Sucesso!");
       } else {
         //tratamento de erro ao cadastrar empresa
         DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
@@ -47,7 +44,8 @@ class CompanyFormState extends State<CompanyForm> {
     }
 
     return Container(
-      padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+      height: 250,
+      padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
       child: Form(
         key: _formKey,
         child: Column(

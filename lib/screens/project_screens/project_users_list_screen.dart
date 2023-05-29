@@ -60,7 +60,7 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
     }
 
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(title: "Listar Usuários de um Projeto"),
       body: Container(
         padding: EdgeInsets.all(30),
         alignment: Alignment.topCenter,

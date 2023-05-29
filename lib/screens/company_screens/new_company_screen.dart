@@ -16,6 +16,6 @@ class NewCompanyScreen extends StatelessWidget {
           title: user.name,
           onTapFunction: () {},
           working: user.working,
-        ), body: Column(children: [CompanyForm()]));
+        ), body: Column(children: [CompanyForm(user:user)]));
   }
 }

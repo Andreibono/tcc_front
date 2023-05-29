@@ -14,7 +14,7 @@ class ActivityUserList extends StatelessWidget {
     final user = ModalRoute.of(context)!.settings.arguments as User;
     List<Activity> activitiesList = user.activitiesList.reversed.toList();
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(title: "Listar Atividade do Usuário"),
       body: Container(
           padding: EdgeInsets.all(30),
           alignment: Alignment.topCenter,

@@ -67,7 +67,7 @@ class _AddUserToProjectState extends State<AddUserToProject> {
     }
 
     return Scaffold(
-      appBar: AppBarCustom(),
+      appBar: AppBarCustom(title:"Adicionar Usuário a um novo Projeto"),
       body: Container(
         padding: EdgeInsets.all(20),
         alignment: Alignment.topCenter,
