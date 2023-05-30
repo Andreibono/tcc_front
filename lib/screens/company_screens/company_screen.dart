@@ -4,6 +4,9 @@ import 'package:tcc_front/models/company.dart';
 
 import '/models/user.dart';
 import '../../components/company_form.dart';
+import '../../util/helpers.dart';
+import '../../models/auth.dart';
+import 'package:provider/provider.dart';
 
 class CompanyScreen extends StatefulWidget {
   const CompanyScreen({Key? key}) : super(key: key);
@@ -16,6 +19,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
   final _searchTextController = TextEditingController();
   bool isFistTime = true;
   List<CompanyInfo> companies = [];
+  bool isLoading = false;
 
   void setList(User user) {
     if (isFistTime) {
@@ -23,8 +27,12 @@ class _CompanyScreenState extends State<CompanyScreen> {
     }
   }
 
-  _submitForm(User user) {
+  Future _submitForm(User user) async {
     isFistTime = false;
+
+    setState(() {
+      isLoading = true;
+    });
 
     if (_searchTextController.text.isEmpty) {
       print("vazio");
@@ -32,23 +40,17 @@ class _CompanyScreenState extends State<CompanyScreen> {
         companies = user.company_list;
       });
       return;
-    }
+    }   
 
-    List<String> companyNameWithLastWhiteSpace =
-        _searchTextController.text.split("");
-    if (companyNameWithLastWhiteSpace[
-            companyNameWithLastWhiteSpace.length - 1] ==
-        ' ') {
-      companyNameWithLastWhiteSpace.removeLast();
-    }
-
-    String companyName = companyNameWithLastWhiteSpace.join();
+    String companyName = removeLastWhiteSpace(_searchTextController.text);
+    Auth auth = Provider.of(context, listen: false);
+    var response = await auth.searchCompany(companyName, user.token);
 
     setState(() {
-      companies = [];
+      companies = response;
+      isLoading = false;
     });
 
-    print(companyName);
   }
 
   @override
@@ -151,26 +153,32 @@ class _CompanyScreenState extends State<CompanyScreen> {
               ),
             ]),
           ),
-          Container(
+          isLoading ? const Padding(
+            padding:  EdgeInsets.all(50.0),
+            child:  CircularProgressIndicator(),
+          ) 
+          : Container(
               height: avaibleHeight * 0.80,
               width: avaibleWidth,
+              alignment: Alignment.topCenter,
               child: companies.isNotEmpty
                   ? ListView.builder(
                       itemCount: companies.length,
+                      shrinkWrap: true,
+                      reverse: true,
                       itemBuilder: (context, index) {
                         final company = companies[index].company;
                         return Card(
                           child: InkWell(
                             child: ListTile(
                                 tileColor: index % 2 == 0
-                                    ? const Color.fromRGBO(65, 70, 77, 0.8)
-                                    : const Color.fromRGBO(28, 32, 38, 1),
+                                    ? const Color.fromRGBO(28, 32, 38, 1)
+                                    : const Color.fromRGBO(65, 70, 77, 0.8),
                                 leading: CircleAvatar(
                                   backgroundColor: index % 2 == 0
-                                      ? const Color.fromARGB(255, 221, 223, 201)
-                                      : const Color.fromARGB(
-                                          255, 138, 167, 128),
-                                  radius: 30,
+                                      ? const Color.fromARGB(255, 138, 167, 128)
+                                      : const Color.fromARGB(255, 221, 223, 201),
+                                  radius: 25,
                                   child: Text(
                                     company.fantasy[0].toUpperCase(),
                                     style: const TextStyle(color: Colors.black),

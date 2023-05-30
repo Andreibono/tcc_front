@@ -432,4 +432,30 @@ class Auth with ChangeNotifier {
     return resposta;
   }
   
+  Future searchCompany(String fantasia, String tokenUser) async {
+    try {
+      final headerToken = <String, String> {
+        'Authorization': 'Bearer $tokenUser'
+      };
+
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http.get(
+        Uri.parse('$url/company/search?fantasia=$fantasia'),
+        headers: requestHeadears);
+
+      if(response.statusCode != 200) {
+        return null;
+      }
+  
+      var responseJson =  json.decode(response.body)['companies'] as List;
+    
+      var companiesList = responseJson
+              .map((tagJson) => CompanyInfo.fromJson(tagJson))
+              .toList();
+
+      return companiesList;
+    } catch (e) {
+       return "erro: $e";
+    }
+  }
 }
