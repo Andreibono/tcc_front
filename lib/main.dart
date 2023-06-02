@@ -4,6 +4,7 @@ import 'package:tcc_front/models/auth.dart';
 import 'package:tcc_front/screens/activities_screens/activity_screen.dart';
 import 'package:tcc_front/screens/activities_screens/activity_user_list_screen.dart';
 import 'package:tcc_front/screens/company_screens/add_user_to_company_screen.dart';
+import 'package:tcc_front/screens/company_screens/company_project_list_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_users_list_screen.dart';
 import 'package:tcc_front/screens/project_screens/add_user_to_project_screen.dart';
@@ -33,12 +34,12 @@ class MyApp extends StatelessWidget {
           AppRoutes.LOGINSCREEN: (ctx) => LoginScreen(),
           AppRoutes.PROJECTSCREEN: (ctx) => ProjectScreen(),
           AppRoutes.COMPANYSCREEN: (ctx) => CompanyScreen(),
-          AppRoutes.ADDUSERTOCOMPANY: (ctx) => AddUserToCompany(),
           AppRoutes.COMPANYUSERSLIST: (ctx) => CompanyUsersList(),
           AppRoutes.ADDUSERTOPROJECTSCREEN: (ctx) => AddUserToProject(),
           AppRoutes.PROJECTUSERSLIST: (ctx) => ProjectUsersList(),
           AppRoutes.ACTIVITYSCREEN: (ctx) => ActivityScreen(),
           AppRoutes.ACTIVITYUSERLIST: (ctx) => ActivityUserList(),
+          AppRoutes.COMPANYPROJECTLIST: (ctx) => CompanyProjectsList()
         },
       ),
     );

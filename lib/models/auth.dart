@@ -7,6 +7,7 @@ import 'package:tcc_front/models/project.dart';
 import 'package:tcc_front/models/user.dart';
 
 import 'activity.dart';
+import 'list_projects.dart';
 import 'list_users.dart';
 
 class Auth with ChangeNotifier {
@@ -192,6 +193,33 @@ class Auth with ChangeNotifier {
       print("erro: $e");
     }
     return usersList;
+  }
+
+  Future<List<ProjectList>> companyProjectsList(
+      String tokenUser, String companyId) async {
+    List<ProjectList> projectList = [];
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/company-projects/$companyId'),
+              headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body)['data'] as List;
+
+          projectList =
+              responseJson.map((tagJson) => ProjectList.fromJson(tagJson)).toList();
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print("erro: $e");
+    }
+    return projectList;
   }
 
   Future projectSingup(String projectName, String description,
@@ -408,8 +436,7 @@ class Auth with ChangeNotifier {
     return resposta;
   }
 
-  Future<String> putWorking(
-      String tokenUser) async {
+  Future<String> putWorking(String tokenUser) async {
     String resposta = "";
     try {
       final headerToken = <String, String>{
@@ -417,8 +444,7 @@ class Auth with ChangeNotifier {
       };
       requestHeadears.addEntries(headerToken.entries);
       var response = await http
-          .put(Uri.parse('$url/working'),
-              headers: requestHeadears)
+          .put(Uri.parse('$url/working'), headers: requestHeadears)
           .then((response) {
         if (response.statusCode == 200) {
           print("Usuário começou a trabalhar");
@@ -431,31 +457,30 @@ class Auth with ChangeNotifier {
     }
     return resposta;
   }
-  
+
   Future searchCompany(String fantasia, String tokenUser) async {
     try {
-      final headerToken = <String, String> {
+      final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
       };
 
       requestHeadears.addEntries(headerToken.entries);
       var response = await http.get(
-        Uri.parse('$url/company/search?fantasia=$fantasia'),
-        headers: requestHeadears);
+          Uri.parse('$url/company/search?fantasia=$fantasia'),
+          headers: requestHeadears);
 
-      if(response.statusCode != 200) {
+      if (response.statusCode != 200) {
         return null;
       }
-  
-      var responseJson =  json.decode(response.body)['companies'] as List;
-    
-      var companiesList = responseJson
-              .map((tagJson) => CompanyInfo.fromJson(tagJson))
-              .toList();
+
+      var responseJson = json.decode(response.body)['companies'] as List;
+
+      var companiesList =
+          responseJson.map((tagJson) => CompanyInfo.fromJson(tagJson)).toList();
 
       return companiesList;
     } catch (e) {
-       return "erro: $e";
+      return "erro: $e";
     }
   }
 }
