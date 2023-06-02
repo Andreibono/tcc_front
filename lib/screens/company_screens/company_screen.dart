@@ -195,7 +195,29 @@ class _CompanyScreenState extends State<CompanyScreen> {
                         );
                       },
                     )
-                  : const SizedBox()),
+                  : Column(
+                    children: [
+                       SizedBox(
+                        height: avaibleWidth * 0.1,
+                       ),
+                       Container(
+                        width: avaibleWidth  * 0.6,
+                        child: Image.asset('assets/imagens/company.png'),
+                       ),
+                       SizedBox(
+                        height: avaibleWidth * 0.1,
+                       ),
+                       const Text(
+                        "Nenhuma empresa cadastrada!",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          ),
+                        )
+                    ],
+                  )
+
+                  ),
         ],
       ),
     );
