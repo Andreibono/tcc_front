@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
           AppRoutes.LOGINSCREEN: (ctx) => LoginScreen(),
           AppRoutes.PROJECTSCREEN: (ctx) => ProjectScreen(),
           AppRoutes.COMPANYSCREEN: (ctx) => CompanyScreen(),
-          AppRoutes.ADDUSERTOCOMPANY: (ctx) => AddUserToCompany(),
           AppRoutes.COMPANYUSERSLIST: (ctx) => CompanyUsersList(),
           AppRoutes.ADDUSERTOPROJECTSCREEN: (ctx) => AddUserToProject(),
           AppRoutes.PROJECTUSERSLIST: (ctx) => ProjectUsersList(),

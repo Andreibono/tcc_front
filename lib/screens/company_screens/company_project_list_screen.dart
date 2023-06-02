@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tcc_front/screens/company_screens/add_user_to_company_screen.dart';
 
 import '/components/app_bar_custom.dart';
 import '/models/user.dart';
 import '../../models/auth.dart';
 import '../../models/list_projects.dart';
 import '../../models/list_users.dart';
+import '../../util/app_routes.dart';
 import '../../util/helpers.dart';
 
 class CompanyProjectsList extends StatefulWidget {
@@ -87,7 +89,7 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
     }
 
     final appBar = AppBarCustom(
-      title: "Projetos",
+      title: user.company_list[index].company.fantasy,
       check: false,
       onTapFunction: () {},
       working: user.working,
@@ -158,9 +160,21 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
-                          // Navigator.of(context).pushNamed(
-                          //   AppRoutes.ADDUSERTOPROJECTSCREEN,
-                          // arguments: user);
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                  child: AddUserToCompany(
+                                      user: user,
+                                      companyId:
+                                          user.company_list[index].company.id));
+                            },
+                          );
                         },
                       ),
                     ),
@@ -177,9 +191,9 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
-                          //Navigator.of(context).pushNamed(
-                          //  AppRoutes.PROJECTUSERSLIST,
-                          //arguments: user);
+                          Navigator.of(context).pushNamed(
+                              AppRoutes.COMPANYUSERSLIST,
+                              arguments: user);
                         },
                       ),
                     ),

@@ -5,6 +5,7 @@ import '/components/app_bar_custom.dart';
 import '/models/auth.dart';
 import '/models/list_users.dart';
 import '/models/user.dart';
+import '../../util/DialogUtils.dart';
 
 class CompanyUsersList extends StatefulWidget {
   CompanyUsersList({Key? key}) : super(key: key);
@@ -14,90 +15,64 @@ class CompanyUsersList extends StatefulWidget {
 }
 
 class _CompanyUsersListState extends State<CompanyUsersList> {
-  bool buttomCheck = false;
-  String? companySelected;
-  int companySelectedIndex = -1;
   List<UserList> usersList = [];
+  bool firstTime = true;
+  bool _isLoading = true;
 
   @override
   Widget build(BuildContext context) {
-    DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ));
-
     final user = ModalRoute.of(context)!.settings.arguments as User;
-    List<String> userCompanies = [];
-    for (int i = 0; i < user.company_list.length; i++) {
-      userCompanies.add(user.company_list[i].company.fantasy);
-    }
+    int index = user.company_list.indexWhere(
+        (company_list) => company_list.company.id == user.open_activity);
 
-    final _formKey = GlobalKey<FormState>();
+    final appBar = AppBarCustom(
+      title: user.company_list[index].company.fantasy,
+      check: false,
+      onTapFunction: () {},
+      working: user.working,
+    );
 
     Future<void> submit() async {
+      firstTime = false;
       usersList.clear();
       List<UserList> usersListresponse = [];
       usersListresponse.clear();
-      final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
 
-      if (!isValid) {
-        return;
-      }
-      _formKey.currentState?.save();
-      usersListresponse = await auth.companyUsersList(user.token.toString(),
-          user.company_list[companySelectedIndex].company.id);
+      usersListresponse = await auth.companyUsersList(
+          user.token.toString(), user.company_list[index].company.id);
 
       if (usersListresponse.isNotEmpty) {
         print('Usuários listados com Sucesso!');
         setState(() {
+          _isLoading = false;
           usersList = usersListresponse;
         });
       } else {
         //tratamento de erro ao listar usuários da empresa
+        DialogUtils.showCustomDialog(context, title: "Erro", content: "");
       }
     }
 
+    setUserList() async {
+      if (firstTime) {
+        await submit();
+      }
+      ;
+    }
+
+    if (firstTime) {
+      setUserList();
+    }
+
     return Scaffold(
-      appBar: AppBarCustom(),
-      body: Container(
-        padding: EdgeInsets.all(30),
-        alignment: Alignment.topCenter,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12)),
-                child: DropdownButton<String>(
-                  value: companySelected,
-                  items: userCompanies.map(buildMenuItem).toList(),
-                  onChanged: (value) => setState(() {
-                    companySelected = value;
-                    buttomCheck = true;
-                    companySelectedIndex =
-                        userCompanies.indexOf(companySelected!);
-                  }),
-                ),
-              ),
-              Visibility(
-                  visible: buttomCheck,
-                  child: ElevatedButton(
-                    onPressed: submit,
-                    child: const Text(
-                      'Listar',
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 8)),
-                  )),
-              Expanded(
+      appBar: appBar,
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Container(
+              padding: EdgeInsets.all(30),
+              alignment: Alignment.topCenter,
+              child: Expanded(
                 child: ListView.builder(
                   itemCount: usersList.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -116,11 +91,8 @@ class _CompanyUsersListState extends State<CompanyUsersList> {
                     );
                   },
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }
