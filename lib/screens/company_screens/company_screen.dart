@@ -189,7 +189,10 @@ class _CompanyScreenState extends State<CompanyScreen> {
                                   style: const TextStyle(color: Colors.white),
                                 )),
                             onTap: () {
-                              //ir para a página da empresa
+                                user.open_activity = companies[index].company.id;
+                                    Navigator.of(context).pushNamed(
+                                        AppRoutes.COMPANYPROJECTLIST,
+                                        arguments: user);
                             },
                           ),
                         );
@@ -218,58 +221,6 @@ class _CompanyScreenState extends State<CompanyScreen> {
                   )
 
                   ),
-          isLoading
-              ? const Padding(
-                  padding: EdgeInsets.all(50.0),
-                  child: CircularProgressIndicator(),
-                )
-              : Container(
-                  height: avaibleHeight * 0.80,
-                  width: avaibleWidth,
-                  alignment: Alignment.topCenter,
-                  child: companies.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: companies.length,
-                          shrinkWrap: true,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            final company = companies[index].company;
-                            return Card(
-                              child: InkWell(
-                                child: ListTile(
-                                    tileColor: index % 2 == 0
-                                        ? const Color.fromRGBO(28, 32, 38, 1)
-                                        : const Color.fromRGBO(65, 70, 77, 0.8),
-                                    leading: CircleAvatar(
-                                      backgroundColor: index % 2 == 0
-                                          ? const Color.fromARGB(
-                                              255, 138, 167, 128)
-                                          : const Color.fromARGB(
-                                              255, 221, 223, 201),
-                                      radius: 25,
-                                      child: Text(
-                                        company.fantasy[0].toUpperCase(),
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                    title: Text(
-                                      company.fantasy,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    )),
-                                onTap: () {
-                                  user.open_activity = companies[index].company.id;
-                                  Navigator.of(context).pushNamed(
-                                      AppRoutes.COMPANYPROJECTLIST,
-                                      arguments: user);
-                                  //ir para a página da empresa
-                                },
-                              ),
-                            );
-                          },
-                        )
-                      : const SizedBox()),
         ],
       ),
     );
