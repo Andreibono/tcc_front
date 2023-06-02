@@ -43,7 +43,7 @@ class _CompanyUsersListState extends State<CompanyUsersList> {
           user.token.toString(), user.company_list[index].company.id);
 
       if (usersListresponse.isNotEmpty) {
-        print('Usuários listados com Sucesso!');
+        //Usuários listados com Sucesso
         setState(() {
           _isLoading = false;
           usersList = usersListresponse;
@@ -72,25 +72,23 @@ class _CompanyUsersListState extends State<CompanyUsersList> {
           : Container(
               padding: EdgeInsets.all(30),
               alignment: Alignment.topCenter,
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: usersList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Nome: ${usersList[index].user.name}, Id: ${usersList[index].user.id}, Role: ${usersList[index].role}",
-                              //style: TextStyle(color: Colors.white),
-                            )
-                          ],
-                        ),
+              child: ListView.builder(
+                itemCount: usersList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Nome: ${usersList[index].user.name}, Id: ${usersList[index].user.id}, Role: ${usersList[index].role}",
+                            //style: TextStyle(color: Colors.white),
+                          )
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
     );
