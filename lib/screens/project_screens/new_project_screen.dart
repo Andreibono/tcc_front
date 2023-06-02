@@ -61,9 +61,12 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       }
     }
 
+    final avaibleWidth = MediaQuery.of(context).size.width;
+    final avaibleHeight = MediaQuery.of(context).size.height;
+
     return Container(
       //padding: EdgeInsets.all(20),
-      height: 250,
+      height: avaibleHeight * 0.35,
       padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
       child: Form(
         key: _formKey,

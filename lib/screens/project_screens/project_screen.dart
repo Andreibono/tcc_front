@@ -49,6 +49,7 @@ class ProjectScreen extends StatelessWidget {
     final avaibleWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: appBar,
       body: Column(children: [
         /* ListTile(
@@ -76,8 +77,6 @@ class ProjectScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Navigator.pop(context);
-
                 Navigator.of(context).pushNamed(
                     AppRoutes.ADDUSERTOPROJECTSCREEN,
                     arguments: user);
@@ -97,8 +96,6 @@ class ProjectScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Navigator.pop(context);
-
                 Navigator.of(context)
                     .pushNamed(AppRoutes.PROJECTUSERSLIST, arguments: user);
               },

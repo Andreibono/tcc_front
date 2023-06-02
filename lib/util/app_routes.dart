@@ -15,6 +15,7 @@ class AppRoutes {
   static const ADDUSERTOCOMPANY = '/home/company/adduser';
   static const NEWCOMPANYFORM = 'home/company/newcompany/form';
   static const COMPANYUSERSLIST = 'home/company/userslist';
+  static const COMPANYPROJECTLIST = 'home/company/projectslist';
  
   // rota das atividades
   static const ACTIVITYSCREEN = 'home/activity';
