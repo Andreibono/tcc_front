@@ -12,11 +12,12 @@ class DialogUtils {
     required String title,
     required String content,
     String okBtnText = "Ok",
+    bool deleteDialog = false,
   }) {
     showDialog(
         context: context,
         builder: (_) {
-          return AlertDialog(
+          return (deleteDialog)? Center(child:Text("Ok")):AlertDialog(
             title: Text(title),
             content: Text(content),
             actions: <Widget>[

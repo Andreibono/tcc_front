@@ -52,56 +52,6 @@ class ProjectScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       appBar: appBar,
       body: Column(children: [
-        /* ListTile(
-          title: Text(
-            'Cadastrar um Novo Projeto',
-            style: TextStyle(color: Colors.white),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-
-            Navigator.of(context)
-                .pushNamed(AppRoutes.NEWPROJECTSCREEN, arguments: user);
-          },
-        ),*/
-        Container(
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-          width: avaibleWidth,
-          child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            color: Colors.blueAccent.shade100,
-            child: ListTile(
-              title: Text(
-                'Adicionar Usuários a um novo Projeto',
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.of(context).pushNamed(
-                    AppRoutes.ADDUSERTOPROJECTSCREEN,
-                    arguments: user);
-              },
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            color: Colors.blueAccent.shade100,
-            child: ListTile(
-              title: Text(
-                'Listar Usuários de um Projeto',
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamed(AppRoutes.PROJECTUSERSLIST, arguments: user);
-              },
-            ),
-          ),
-        ),
         Container(
           alignment: Alignment.bottomCenter,
           child: const Text(
@@ -141,7 +91,9 @@ class ProjectScreen extends StatelessWidget {
                                 style: const TextStyle(color: Colors.white),
                               )),
                           onTap: () {
-                            //ir para a página dos projetos
+                            Navigator.of(context).pushNamed(
+                                AppRoutes.PROJECTUSERSLIST,
+                                arguments: {'user': user, 'project': project});
                           },
                         ),
                       );

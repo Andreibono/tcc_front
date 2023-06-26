@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tcc_front/screens/company_screens/add_user_to_company_screen.dart';
+import 'package:tcc_front/util/InfoModal.dart';
+import 'package:tcc_front/util/colors.dart';
 
 import '/components/app_bar_custom.dart';
 import '/models/user.dart';
 import '../../models/auth.dart';
 import '../../models/list_projects.dart';
 import '../../models/list_users.dart';
+import '../../models/project.dart';
 import '../../util/app_routes.dart';
+import '../../util/deleteModal.dart';
 import '../../util/helpers.dart';
 
 class CompanyProjectsList extends StatefulWidget {
@@ -88,10 +92,34 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
       }
     }
 
+    bool manager = (user.company_list[index].role_user == '1');
+
     final appBar = AppBarCustom(
       title: user.company_list[index].company.fantasy,
-      check: false,
-      onTapFunction: () {},
+      delete: manager,
+      onTapFunction: () {
+        manager == true
+            ? showModalBottomSheet(
+                context: context,
+                builder: (_) {
+                  return Wrap(
+                    children: [
+                      Container(
+                        height: 200,
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25.0),
+                                topRight: Radius.circular(25.0))),
+                        child: DeleteModal(
+                            type: "company",
+                            company: user.company_list[index].company),
+                      )
+                    ],
+                  );
+                })
+            : {};
+      },
       working: user.working,
     );
 
@@ -99,7 +127,6 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
       if (firstTime) {
         await submit();
       }
-      ;
     }
 
     if (firstTime) {
@@ -127,21 +154,47 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                         shrinkWrap: true,
                         padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                         separatorBuilder: (context, index) {
-                          return const SizedBox(width: 5);
+                          return const SizedBox(width: 10);
                         },
-                        itemBuilder: (BuildContext context, int index) {
-                          return CircleAvatar(
-                            backgroundColor:
-                                usersList[index].user.working == 'true'
-                                    ? Colors.green
-                                    : Colors.red,
-                            radius: 20,
+                        itemBuilder: (BuildContext context, int userIndex) {
+                          return InkWell(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom),
+                                      child: InfoModal(
+                                        user: user,
+                                        modalUser: usersList[userIndex].user,
+                                        companyRoleUser:
+                                            user.company_list[index].role_user,
+                                        companyId:
+                                            user.company_list[index].company.id,
+                                      ));
+                                },
+                              );
+                            },
                             child: CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 18,
-                              child: Text(
-                                usersList[index].user.name[0].toUpperCase(),
-                                style: const TextStyle(color: Colors.black),
+                              backgroundColor:
+                                  usersList[userIndex].user.working == 'true'
+                                      ? Colors.green
+                                      : Colors.red,
+                              radius: 20,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 18,
+                                child: Text(
+                                  usersList[userIndex]
+                                      .user
+                                      .name[0]
+                                      .toUpperCase(),
+                                  style: const TextStyle(color: Colors.black),
+                                ),
                               ),
                             ),
                           );
@@ -153,9 +206,9 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
-                      color: Colors.blueAccent.shade100,
+                      color: UtilColors.buttonColor,
                       child: ListTile(
-                        title: Text(
+                        title: const Text(
                           'Adicionar Usuários a Empresa',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -180,13 +233,13 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
-                      color: Colors.blueAccent.shade100,
+                      color: UtilColors.buttonColor,
                       child: ListTile(
-                        title: Text(
+                        title: const Text(
                           'Listar Todos os Usuários da Empresa',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -230,7 +283,7 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                     ),
                   ),
                   _isLoading2
-                      ? CircularProgressIndicator()
+                      ? const CircularProgressIndicator()
                       : Expanded(
                           flex: 7,
                           child: Align(
@@ -270,11 +323,21 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                                               color: Colors.white),
                                         )),
                                     onTap: () {
-                                      //user.open_activity = companies[index].company.id;
-                                      //Navigator.of(context).pushNamed(
-                                      //  AppRoutes.COMPANYPROJECTLIST,
-                                      //arguments: user);
                                       //ir para a página da empresa
+                                      Project project = Project(
+                                          id: projectsList[index].id,
+                                          name: projectsList[index].name,
+                                          admin: projectsList[index].admin,
+                                          created_at:
+                                              projectsList[index].created_at,
+                                          description:
+                                              projectsList[index].description);
+                                      Navigator.of(context).pushNamed(
+                                          AppRoutes.PROJECTUSERSLIST,
+                                          arguments: {
+                                            'user': user,
+                                            'project': project
+                                          });
                                     },
                                   ),
                                 );

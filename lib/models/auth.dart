@@ -210,8 +210,9 @@ class Auth with ChangeNotifier {
         if (response.statusCode == 200) {
           var responseJson = json.decode(response.body)['data'] as List;
 
-          projectList =
-              responseJson.map((tagJson) => ProjectList.fromJson(tagJson)).toList();
+          projectList = responseJson
+              .map((tagJson) => ProjectList.fromJson(tagJson))
+              .toList();
         } else {
           print(jsonDecode(response.body).toString());
         }
@@ -482,5 +483,61 @@ class Auth with ChangeNotifier {
     } catch (e) {
       return "erro: $e";
     }
+  }
+
+  Future<String> deleteCompanyUsers(
+      int userId, String? companyId, String? tokenUser) async {
+    var resposta = '';
+    List<int> usersIds = [];
+    usersIds.add(userId);
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+
+      requestHeadears.addEntries(headerToken.entries);
+      var response =
+          await http.delete(Uri.parse('$url/company-users/$companyId'),
+              body: jsonEncode(
+                {"users": usersIds},
+              ),
+              headers: requestHeadears);
+
+      if (response.statusCode == 200) {}
+      else{
+        resposta = jsonDecode(response.body).toString();
+      }
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+
+  Future<String> deleteProjectUsers(
+      int userId, String? projectId, String? tokenUser) async {
+    var resposta = '';
+    List<int> usersIds = [];
+    usersIds.add(userId);
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+
+      requestHeadears.addEntries(headerToken.entries);
+      var response =
+          await http.delete(Uri.parse('$url/project-users/$projectId'),
+              body: jsonEncode(
+                {"users": usersIds},
+              ),
+              headers: requestHeadears);
+
+      if (response.statusCode == 200){}
+      else{
+        resposta = jsonDecode(response.body).toString();
+      }
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
   }
 }

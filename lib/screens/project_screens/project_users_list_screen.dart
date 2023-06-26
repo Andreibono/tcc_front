@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tcc_front/util/deleteModal.dart';
 
 import '/components/app_bar_custom.dart';
 import '/models/auth.dart';
 import '/models/user.dart';
+import '../../models/project.dart';
+import '../../util/InfoModal.dart';
+import '../../util/colors.dart';
+import 'add_user_to_project_screen.dart';
 
 class ProjectUsersList extends StatefulWidget {
   ProjectUsersList({Key? key}) : super(key: key);
@@ -13,96 +18,152 @@ class ProjectUsersList extends StatefulWidget {
 }
 
 class _ProjectUsersListState extends State<ProjectUsersList> {
-  bool buttomCheck = false;
-  String? projectSelected;
-  int projectSelectedIndex = -1;
+  bool loading = true;
   List<User> usersList = [];
+  bool firstTime = true;
 
   @override
   Widget build(BuildContext context) {
-    DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ));
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    User user = arguments['user'];
+    Project project = arguments['project'];
 
-    final user = ModalRoute.of(context)!.settings.arguments as User;
+    bool manager = (project.admin == user.id);
+
+    final appBar = AppBarCustom(
+      title: project.name,
+      onTapFunction: () {
+        manager == true
+            ? showModalBottomSheet(
+                context: context,
+                builder: (_) {
+                  return Wrap(
+                    children: [
+                      Container(
+                        height: 200,
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25.0),
+                                topRight: Radius.circular(25.0))),
+                        child: DeleteModal(type: "project", project: project),
+                      )
+                    ],
+                  );
+                })
+            : {};
+      },
+      delete: manager,
+      working: user.working,
+    );
+
     List<String> userProjects = [];
     for (int i = 0; i < user.projectsList.length; i++) {
       userProjects.add(user.projectsList[i].project.name);
     }
 
-    final _formKey = GlobalKey<FormState>();
-
     Future<void> submit() async {
-      usersList.clear();
+      this.firstTime = false;
       List<User> usersListresponse = [];
-      usersListresponse.clear();
-      final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
-
-      if (!isValid) {
-        return;
-      }
-      _formKey.currentState?.save();
-      usersListresponse = await auth.projectUsersList(user.token.toString(),
-          user.projectsList[projectSelectedIndex].project.id);
+      usersListresponse =
+          await auth.projectUsersList(user.token.toString(), project.id);
 
       if (usersListresponse.isNotEmpty) {
-        print('Usuários listados com Sucesso!');
         setState(() {
+          loading = false;
           usersList = usersListresponse;
         });
       } else {
-        //tratamento de erro ao listar usuários da empresa
+        //tratamento de erro ao listar usuários do projeto
+        //DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
       }
     }
 
+    void firstTime() {
+      if (this.firstTime == true) {
+        submit();
+      }
+    }
+
+    firstTime();
+    final avaibleWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBarCustom(title: "Listar Usuários de um Projeto"),
+      appBar: appBar,
       body: Container(
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.fromLTRB(05, 10, 05, 05),
         alignment: Alignment.topCenter,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12)),
-                child: DropdownButton<String>(
-                  value: projectSelected,
-                  items: userProjects.map(buildMenuItem).toList(),
-                  onChanged: (value) => setState(() {
-                    projectSelected = value;
-                    buttomCheck = true;
-                    projectSelectedIndex =
-                        userProjects.indexOf(projectSelected!);
-                  }),
+        child: Column(
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              color: UtilColors.buttonColor,
+              child: ListTile(
+                title: const Text(
+                  'Adicionar Usuário ao Projeto',
+                  style: TextStyle(color: Colors.white),
                 ),
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: AddUserToProject(
+                              user: user, projectId: project.id));
+                    },
+                  );
+                },
               ),
-              Visibility(
-                  visible: buttomCheck,
-                  child: ElevatedButton(
-                    onPressed: submit,
-                    child: const Text(
-                      'Listar',
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 8)),
-                  )),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: usersList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            loading == true
+                ? const Center(child: CircularProgressIndicator())
+                : Container(
+                    width: avaibleWidth / 1.2,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border:
+                            Border.all(color: UtilColors.borderColor, width: 3),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: ListTile(
+                      title: Text(project.description),
+                    )),
+            const SizedBox(height: 15),
+            Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 10);
+                },
+                itemCount: usersList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: InfoModal(
+                                user: user,
+                                modalUser: usersList[index],
+                                project: project,
+                              ));
+                        },
+                      );
+                    },
+                    child: Card(
                       child: Padding(
-                        padding: EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Row(
                           children: [
                             Text(
@@ -112,12 +173,12 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                           ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
         ),
       ),
     );

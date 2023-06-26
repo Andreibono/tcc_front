@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../components/drawer_custom.dart';
@@ -12,20 +13,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     var user = ModalRoute.of(context)!.settings.arguments as User;
 
-Future<void> refresh() async{
-
-  Auth auth = Provider.of(context, listen: false);
-  user = await auth.login(user.email,user.password );
+    Future<void> refresh() async {
+      Auth auth = Provider.of(context, listen: false);
+      user = await auth.login(user.email, user.password);
       if (user.error_message == '') {
         //login com sucesso
         // get das Empresas do Usuário
-        
+
         user = await auth.fetchCompanies(user.token);
 
         //get dos projetos do Usuário
@@ -33,16 +31,19 @@ Future<void> refresh() async{
 
         //get das atividades do Usuário
         user = await auth.fetchActivities(user.token);
-        
-      } else {
+      } 
+      else {
         //tratamento de erro
-        
-        DialogUtils.showCustomDialog(context,
-          title: "Erro",
-          content: user.error_message);
 
-      }};
-  
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: user.error_message);
+      }
+    }
+
+    var now = DateTime.now();
+    print(now.month);
+    print(now.weekday);
+
 
     return Scaffold(
       drawer: DrawerCustom(user: user),
@@ -75,5 +76,3 @@ Future<void> refresh() async{
     );
   }
 }
-
-

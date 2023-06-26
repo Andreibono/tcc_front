@@ -39,6 +39,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
       print("vazio");
       setState(() {
         companies = user.company_list;
+        isLoading = false;
       });
       return;
     }
@@ -114,30 +115,6 @@ class _CompanyScreenState extends State<CompanyScreen> {
                   ),
                 ),
               ),
-              // ListTile(
-              //   title: Text(
-              //     'Adicionar Usuários a Empresa',
-              //     style: TextStyle(color: Colors.white),
-              //   ),
-              //   onTap: () {
-              //     Navigator.pop(context);
-
-              //     Navigator.of(context)
-              //         .pushNamed(AppRoutes.ADDUSERTOCOMPANY, arguments: user);
-              //   },
-              // ),
-              // ListTile(
-              //   title: Text(
-              //     'Listar Usuários da Empresa',
-              //     style: TextStyle(color: Colors.white),
-              //   ),
-              //   onTap: () {
-              //     Navigator.pop(context);
-
-              //     Navigator.of(context)
-              //         .pushNamed(AppRoutes.COMPANYUSERSLIST, arguments: user);
-              //   },
-              // ),
               SizedBox(
                 height: avaibleHeight * 0.05,
               ),
@@ -153,74 +130,78 @@ class _CompanyScreenState extends State<CompanyScreen> {
               ),
             ]),
           ),
-          isLoading ? const Padding(
-            padding:  EdgeInsets.all(50.0),
-            child:  CircularProgressIndicator(),
-          ) 
-          : Container(
-              height: avaibleHeight * 0.80,
-              width: avaibleWidth,
-              alignment: Alignment.topCenter,
-              child: companies.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: companies.length,
-                      shrinkWrap: true,
-                      reverse: true,
-                      itemBuilder: (context, index) {
-                        final company = companies[index].company;
-                        return Card(
-                          child: InkWell(
-                            child: ListTile(
-                                tileColor: index % 2 == 0
-                                    ? const Color.fromRGBO(28, 32, 38, 1)
-                                    : const Color.fromRGBO(65, 70, 77, 0.8),
-                                leading: CircleAvatar(
-                                  backgroundColor: index % 2 == 0
-                                      ? const Color.fromARGB(255, 138, 167, 128)
-                                      : const Color.fromARGB(255, 221, 223, 201),
-                                  radius: 25,
-                                  child: Text(
-                                    company.fantasy[0].toUpperCase(),
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                title: Text(
-                                  company.fantasy,
-                                  style: const TextStyle(color: Colors.white),
-                                )),
-                            onTap: () {
-                                user.open_activity = companies[index].company.id;
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.COMPANYPROJECTLIST,
-                                        arguments: user);
-                            },
-                          ),
-                        );
-                      },
-                    )
-                  : Column(
-                    children: [
-                       SizedBox(
-                        height: avaibleWidth * 0.1,
-                       ),
-                       Container(
-                        width: avaibleWidth  * 0.6,
-                        child: Image.asset('assets/imagens/company.png'),
-                       ),
-                       SizedBox(
-                        height: avaibleWidth * 0.1,
-                       ),
-                       const Text(
-                        "Nenhuma empresa cadastrada!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          ),
+          isLoading
+              ? const Padding(
+                  padding: EdgeInsets.all(50.0),
+                  child: CircularProgressIndicator(),
+                )
+              : Container(
+                  height: avaibleHeight * 0.80,
+                  width: avaibleWidth,
+                  alignment: Alignment.topCenter,
+                  child: companies.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: companies.length,
+                          shrinkWrap: true,
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            final company = companies[index].company;
+                            return Card(
+                              child: InkWell(
+                                child: ListTile(
+                                    tileColor: index % 2 == 0
+                                        ? const Color.fromRGBO(28, 32, 38, 1)
+                                        : const Color.fromRGBO(65, 70, 77, 0.8),
+                                    leading: CircleAvatar(
+                                      backgroundColor: index % 2 == 0
+                                          ? const Color.fromARGB(
+                                              255, 138, 167, 128)
+                                          : const Color.fromARGB(
+                                              255, 221, 223, 201),
+                                      radius: 25,
+                                      child: Text(
+                                        company.fantasy[0].toUpperCase(),
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      company.fantasy,
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    )),
+                                onTap: () {
+                                  user.open_activity =
+                                      companies[index].company.id;
+                                  Navigator.of(context).pushNamed(
+                                      AppRoutes.COMPANYPROJECTLIST,
+                                      arguments: user);
+                                },
+                              ),
+                            );
+                          },
                         )
-                    ],
-                  )
-
-                  ),
+                      : Column(
+                          children: [
+                            SizedBox(
+                              height: avaibleWidth * 0.1,
+                            ),
+                            Container(
+                              width: avaibleWidth * 0.6,
+                              child: Image.asset('assets/imagens/company.png'),
+                            ),
+                            SizedBox(
+                              height: avaibleWidth * 0.1,
+                            ),
+                            const Text(
+                              "Nenhuma empresa cadastrada!",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        )),
         ],
       ),
     );

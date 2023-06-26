@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppBarCustom extends AppBar {
-  AppBarCustom({title = '', onTapFunction, working = 'true', check = false})
+  AppBarCustom({title = '', onTapFunction, working = 'true', check = false, delete = false})
       : super(
           title: Row(
             children: [
@@ -37,7 +37,20 @@ class AppBarCustom extends AppBar {
                   onTap: onTapFunction,
                   child: Container(
                     alignment: Alignment.center,
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: Visibility(
+                visible: delete,
+                child: InkWell(
+                  onTap: onTapFunction,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.delete),
                   ),
                 ),
               ),

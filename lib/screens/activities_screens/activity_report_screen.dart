@@ -40,11 +40,15 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
       print(
           "hoars:${horas.floor()}  minutos:${minute.floor()}  segundos:${seconds.floor()}");
 
-      return (horas < 10 ? '0' + horas.toString() : horas.toString()) +
-          ":" +
-          (minute < 10 ? '0' + minute.toString() : minute.toString()) +
-          ":" +
-          (seconds < 10 ? '0' + seconds.toString() : seconds.toString());
+      if (horas >= 100) {
+        return ('99:99:99');
+      } else {
+        return (horas < 10 ? '0' + horas.toString() : horas.toString()) +
+            ":" +
+            (minute < 10 ? '0' + minute.toString() : minute.toString()) +
+            ":" +
+            (seconds < 10 ? '0' + seconds.toString() : seconds.toString());
+      }
     }
 
     Future<void> submit() async {

@@ -6,6 +6,7 @@ import '/models/auth.dart';
 import '/models/list_users.dart';
 import '/models/user.dart';
 import '../../util/DialogUtils.dart';
+import '../../util/InfoModal.dart';
 
 class CompanyUsersList extends StatefulWidget {
   CompanyUsersList({Key? key}) : super(key: key);
@@ -74,17 +75,38 @@ class _CompanyUsersListState extends State<CompanyUsersList> {
               alignment: Alignment.topCenter,
               child: ListView.builder(
                 itemCount: usersList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Nome: ${usersList[index].user.name}, Id: ${usersList[index].user.id}, Role: ${usersList[index].role}",
-                            //style: TextStyle(color: Colors.white),
-                          )
-                        ],
+                itemBuilder: (BuildContext context, int userIndex) {
+                  return InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: InfoModal(
+                                user: user,
+                                modalUser: usersList[userIndex].user,
+                                companyRoleUser:
+                                    user.company_list[index].role_user,
+                                companyId: user.company_list[index].company.id,
+                              ));
+                        },
+                      );
+                    },
+                    child: Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Nome: ${usersList[userIndex].user.name}, Id: ${usersList[userIndex].user.id}, Role: ${usersList[userIndex].role}",
+                              //style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );
