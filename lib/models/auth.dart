@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tcc_front/models/company.dart';
 import 'package:tcc_front/models/project.dart';
+import 'package:tcc_front/models/report.dart';
 import 'package:tcc_front/models/user.dart';
 
 import 'activity.dart';
@@ -140,7 +141,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> addUserCompany(
-      String tokenUser, String userId, String companyId) async {
+      String tokenUser, String userEmail, String companyId) async {
     String resposta = "";
     try {
       final headerToken = <String, String>{
@@ -151,7 +152,7 @@ class Auth with ChangeNotifier {
           .post(Uri.parse('$url/company-users/$companyId'),
               body: jsonEncode(
                 {
-                  "newUserId": userId,
+                  "newUserEmail": userEmail,
                 },
               ),
               headers: requestHeadears)
@@ -286,11 +287,11 @@ class Auth with ChangeNotifier {
     return user;
   }
 
-  Future<String> addUserProject(
-      String tokenUser, int userId, String projectId, String companyId) async {
+  Future<String> addUserProject(String tokenUser, String userEmail,
+      String projectId, String companyId) async {
     String resposta = "";
-    List<int> usersIds = [];
-    usersIds.add(userId);
+    List<String> usersEmails = [];
+    usersEmails.add(userEmail);
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -299,7 +300,7 @@ class Auth with ChangeNotifier {
       var response = await http
           .post(Uri.parse('$url/user-projects/$projectId'),
               body: jsonEncode(
-                {"users": usersIds, "companyId": companyId},
+                {"users": usersEmails, "companyId": companyId},
               ),
               headers: requestHeadears)
           .then((response) {
@@ -486,10 +487,10 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> deleteCompanyUsers(
-      int userId, String? companyId, String? tokenUser) async {
+      String userEmail, String? companyId, String? tokenUser) async {
     var resposta = '';
-    List<int> usersIds = [];
-    usersIds.add(userId);
+    List<String> usersEmails = [];
+    usersEmails.add(userEmail);
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -499,12 +500,12 @@ class Auth with ChangeNotifier {
       var response =
           await http.delete(Uri.parse('$url/company-users/$companyId'),
               body: jsonEncode(
-                {"users": usersIds},
+                {"usersEmail": usersEmails},
               ),
               headers: requestHeadears);
 
-      if (response.statusCode == 200) {}
-      else{
+      if (response.statusCode == 200) {
+      } else {
         resposta = jsonDecode(response.body).toString();
       }
     } catch (e) {
@@ -514,10 +515,10 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> deleteProjectUsers(
-      int userId, String? projectId, String? tokenUser) async {
+      String userEmail, String? projectId, String? tokenUser) async {
     var resposta = '';
-    List<int> usersIds = [];
-    usersIds.add(userId);
+    List<String> usersEmails = [];
+    usersEmails.add(userEmail);
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -525,19 +526,115 @@ class Auth with ChangeNotifier {
 
       requestHeadears.addEntries(headerToken.entries);
       var response =
-          await http.delete(Uri.parse('$url/project-users/$projectId'),
+          await http.delete(Uri.parse('$url/user-projects/$projectId'),
               body: jsonEncode(
-                {"users": usersIds},
+                {"usersEmail": usersEmails},
               ),
               headers: requestHeadears);
 
-      if (response.statusCode == 200){}
-      else{
+      if (response.statusCode == 200) {
+      } else {
         resposta = jsonDecode(response.body).toString();
       }
     } catch (e) {
       resposta = "erro: $e";
     }
     return resposta;
+  }
+
+  Future<String> deleteCompany(String? companyId, String? tokenUser) async {
+    var resposta = '';
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http.delete(Uri.parse('$url/company/$companyId'),
+          headers: requestHeadears);
+
+      if (response.statusCode == 200) {
+      } else {
+        resposta = jsonDecode(response.body).toString();
+      }
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+
+  Future<String> deleteProject(String? projectId, String? tokenUser) async {
+    var resposta = '';
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http.delete(Uri.parse('$url/projects/$projectId'),
+          headers: requestHeadears);
+
+      if (response.statusCode == 200) {
+      } else {
+        resposta = jsonDecode(response.body).toString();
+      }
+    } catch (e) {
+      resposta = "erro: $e";
+    }
+    return resposta;
+  }
+
+  Future<List<ReportInfo>> fetchReportsFilter(
+      String tokenUser, String projectId, int filter) async {
+    List<ReportInfo> activitiesList = [];
+    String auxurl = "$url/reports/search?project=$projectId";
+    auxurl += filter == 0 ? "" : "&month=$filter";
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse(auxurl), headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body) as List;
+          activitiesList = responseJson
+              .map((tagJson) => ReportInfo.fromJson(tagJson))
+              .toList();
+        } else {
+          print(jsonDecode(response.body).toString());
+        }
+      });
+    } catch (e) {
+      print('erro: $e');
+    }
+    return activitiesList;
+  }
+
+  Future<ReportInfo> fetchReport(String tokenUser, String activityId) async {
+    ReportInfo report = ReportInfo();
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tokenUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .get(Uri.parse('$url/reports/$activityId'), headers: requestHeadears)
+          .then((response) {
+        if (response.statusCode == 200) {
+          var responseJson = json.decode(response.body);
+          report.id = jsonDecode(response.body)['id'].toString();
+          report.report = Report.fromJson(jsonDecode(response.body)['report']);
+          report.activity =
+              Activity.fromJson(jsonDecode(response.body)['activity']);
+        } else {
+          report.error = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      report.error = e.toString();
+    }
+    return report;
   }
 }

@@ -112,8 +112,10 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                                 topLeft: Radius.circular(25.0),
                                 topRight: Radius.circular(25.0))),
                         child: DeleteModal(
-                            type: "company",
-                            company: user.company_list[index].company),
+                          type: "company",
+                          company: user.company_list[index].company,
+                          tokenUser: user.token,
+                        ),
                       )
                     ],
                   );

@@ -7,7 +7,9 @@ import '../../util/DialogUtils.dart';
 
 class NewActivityScreen extends StatefulWidget {
   final User user;
-  const NewActivityScreen({required this.user, Key? key}) : super(key: key);
+  final String? projectId;
+  const NewActivityScreen({required this.user, this.projectId, Key? key})
+      : super(key: key);
 
   @override
   State<NewActivityScreen> createState() => _NewActivityScreenState();
@@ -40,16 +42,15 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     Future<void> submit() async {
       final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
+      String projectId = widget.projectId ??
+          widget.user.projectsList[projectSelectedIndex].project.id;
 
       if (!isValid) {
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.activitySingup(
-          _authData['activityName']!,
-          _authData['description']!,
-          widget.user.token.toString(),
-          widget.user.projectsList[projectSelectedIndex].project.id);
+      var resposta = await auth.activitySingup(_authData['activityName']!,
+          _authData['description']!, widget.user.token.toString(), projectId);
       print('resposta: $resposta');
       if (resposta == '') {
         //Atividade cadastrada com sucesso
@@ -62,6 +63,9 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
       }
     }
 
+    //final avaibleHeight = MediaQuery.of(context).size.height;
+    //final avaibleWidth = MediaQuery.of(context).size.width;
+
     return Container(
       height: 300,
       padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
@@ -69,25 +73,31 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
         key: _formKey,
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(12)),
-              child: DropdownButton<String>(
-                //for (int i = 0; i < user.company_list.length; i++)
-                value: projectSelected,
-                items: userProjects.map(buildMenuItem).toList(),
-                onChanged: (value) => setState(() {
-                  projectSelected = value;
-                  buttomCheck = true;
-                  projectSelectedIndex = userProjects.indexOf(projectSelected!);
-                }),
-              ),
-            ),
+            widget.projectId == null
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: DropdownButton<String>(
+                      dropdownColor: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      style: const TextStyle(color: Colors.black),
+                      value: projectSelected,
+                      items: userProjects.map(buildMenuItem).toList(),
+                      onChanged: (value) => setState(() {
+                        projectSelected = value;
+                        buttomCheck = true;
+                        projectSelectedIndex =
+                            userProjects.indexOf(projectSelected!);
+                      }),
+                    ),
+                  )
+                : const SizedBox(width: 1),
             Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: 'Nome da Atividade',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
@@ -105,7 +115,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: 'Descrição da Atividade',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
@@ -119,19 +129,31 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
                     return null;
                   },
                 )),
-            Visibility(
-                visible: buttomCheck,
-                child: ElevatedButton(
-                  onPressed: submit,
-                  child: Text(
-                    'Salvar',
-                  ),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 8)),
-                ))
+            widget.projectId == null
+                ? Visibility(
+                    visible: buttomCheck,
+                    child: ElevatedButton(
+                      onPressed: submit,
+                      child: const Text(
+                        'Salvar',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 8)),
+                    ))
+                : ElevatedButton(
+                    onPressed: submit,
+                    child: const Text(
+                      'Salvar',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 8)),
+                  )
           ],
         ),
       ),

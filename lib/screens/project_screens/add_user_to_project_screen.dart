@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tcc_front/models/list_projects.dart';
 
 import '/models/auth.dart';
 import '/models/user.dart';
@@ -24,7 +23,7 @@ class _AddUserToProjectState extends State<AddUserToProject> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> _authData = {
-      'newUserId': '',
+      'newUserEmail': '',
     };
 
     int index = widget.user.projectsList.indexWhere(
@@ -40,10 +39,9 @@ class _AddUserToProjectState extends State<AddUserToProject> {
       _formKey.currentState?.save();
       var resposta = await auth.addUserProject(
           widget.user.token.toString(),
-          int.parse(_authData['newUserId']!),
+          _authData['newUserEmail']!,
           widget.projectId,
           widget.user.projectsList[index].project.companyProj.id);
-      print('resposta: $resposta');
       if (resposta == '') {
         //usuário adicionado com sucesso
         DialogUtils.showCustomDialog(context,
@@ -58,7 +56,7 @@ class _AddUserToProjectState extends State<AddUserToProject> {
 
     return Container(
       height: avaibleHeight * 0.30,
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       alignment: Alignment.topCenter,
       child: Form(
         key: _formKey,
@@ -68,24 +66,23 @@ class _AddUserToProjectState extends State<AddUserToProject> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      labelText: 'Id do Usuário',
+                  decoration: const InputDecoration(
+                      labelText: 'Email do Usuário',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
                   onSaved: (newUserId) =>
-                      _authData['newUserId'] = newUserId ?? '',
+                      _authData['newUserEmail'] = newUserId ?? '',
                   validator: (_newUserId) {
                     final newUserId = _newUserId ?? '';
                     if (newUserId == '') {
-                      return 'Informe um Id válido';
+                      return 'Informe um Email válido!';
                     }
                     return null;
                   },
                 )),
             ElevatedButton(
               onPressed: submit,
-              child: Text(
+              child: const Text(
                 'Adicionar',
               ),
               style: ElevatedButton.styleFrom(

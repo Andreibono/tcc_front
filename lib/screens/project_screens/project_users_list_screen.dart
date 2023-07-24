@@ -7,7 +7,9 @@ import '/models/auth.dart';
 import '/models/user.dart';
 import '../../models/project.dart';
 import '../../util/InfoModal.dart';
+import '../../util/app_routes.dart';
 import '../../util/colors.dart';
+import '../activities_screens/add_activity_screen.dart';
 import 'add_user_to_project_screen.dart';
 
 class ProjectUsersList extends StatefulWidget {
@@ -46,7 +48,11 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(25.0),
                                 topRight: Radius.circular(25.0))),
-                        child: DeleteModal(type: "project", project: project),
+                        child: DeleteModal(
+                          type: "project",
+                          project: project,
+                          tokenUser: user.token,
+                        ),
                       )
                     ],
                   );
@@ -117,6 +123,47 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                               user: user, projectId: project.id));
                     },
                   );
+                },
+              ),
+            ),
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              color: UtilColors.buttonColor,
+              child: ListTile(
+                title: const Text(
+                  'Iniciar Uma Atividade ao Projeto',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return Padding(
+                          padding: MediaQuery.of(context).viewInsets,
+                          child: NewActivityScreen(
+                            user: user,
+                            projectId: project.id,
+                          ));
+                    },
+                  );
+                },
+              ),
+            ),
+            Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              color: UtilColors.buttonColor,
+              child: ListTile(
+                title: const Text(
+                  'Listar Atividades Relacionadas e este Projeto',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                      AppRoutes.ACTIVITYPROJECTREPORTSCREEN,
+                                arguments: {'user': user, 'project': project});
                 },
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_front/components/app_bar_custom.dart';
 import 'package:tcc_front/screens/activities_screens/activity_report_screen.dart';
+import 'package:tcc_front/util/colors.dart';
 
 import '/models/user.dart';
 import '../../models/activity.dart';
@@ -38,15 +39,12 @@ class ActivityScreen extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return Card(
             color: activitiesList[index].status
-                ? Color.fromARGB(255, 166, 235, 168)
-                : Color.fromARGB(255, 247, 223, 151),
+                ? UtilColors.closedActivity
+                : UtilColors.openActivity,
             child: InkWell(
               onTap: () {
                 user.open_activity = activitiesList[index].id;
-                activitiesList[index].status
-                    ? DialogUtils.showCustomDialog(context,
-                        title: "Erro", content: "Atividade já foi encerrada!")
-                    : showModalBottomSheet(
+                 showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
@@ -56,6 +54,7 @@ class ActivityScreen extends StatelessWidget {
                                       MediaQuery.of(context).viewInsets.bottom),
                               child: ActivityReportScreen(
                                 user: user,
+                                activity: activitiesList[index],
                               ));
                         },
                       );

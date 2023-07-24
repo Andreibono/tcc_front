@@ -32,7 +32,6 @@ class CompanyFormState extends State<CompanyForm> {
       _formKey.currentState?.save();
       var resposta = await auth.companySingup(_authData['fantasyName']!,
           _authData['CNPJ']!, widget.user.token.toString());
-      print('resposta: $resposta');
       if (resposta == '') {
         //empresa cadastrada com sucesso
         DialogUtils.showCustomDialog(context,
@@ -45,7 +44,7 @@ class CompanyFormState extends State<CompanyForm> {
 
     return Container(
       height: 250,
-      padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
+      padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
       child: Form(
         key: _formKey,
         child: Column(
@@ -54,7 +53,7 @@ class CompanyFormState extends State<CompanyForm> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: 'Nome Fantasia',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 20, 20, 20)),
@@ -73,7 +72,8 @@ class CompanyFormState extends State<CompanyForm> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
                       labelText: 'CPF/CNPJ',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
@@ -88,8 +88,8 @@ class CompanyFormState extends State<CompanyForm> {
                 )),
             ElevatedButton(
               onPressed: submit,
-              child: Text(
-                'Salvar',
+              child: const Text(
+                'Cadastrar',
               ),
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(

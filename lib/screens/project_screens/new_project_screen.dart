@@ -76,6 +76,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(12)),
               child: DropdownButton<String>(
+                dropdownColor: Colors.white,
+                borderRadius: BorderRadius.circular(20),
                 value: companySelected,
                 items: userCompanies.map(buildMenuItem).toList(),
                 onChanged: (value) => setState(() {

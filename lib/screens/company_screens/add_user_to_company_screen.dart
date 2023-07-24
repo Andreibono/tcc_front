@@ -23,7 +23,7 @@ class _AddUserToCompanyState extends State<AddUserToCompany> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> _authData = {
-      'newUserId': '',
+      'newUserEmail': '',
     };
 
     Future<void> submit() async {
@@ -35,8 +35,7 @@ class _AddUserToCompanyState extends State<AddUserToCompany> {
       }
       _formKey.currentState?.save();
       var resposta = await auth.addUserCompany(widget.user.token.toString(),
-          _authData['newUserId']!, widget.companyId);
-      print('resposta: $resposta');
+          _authData['newUserEmail']!, widget.companyId);
       if (resposta == '') {
         //usuário adicionado com sucesso
         DialogUtils.showCustomDialog(context,
@@ -52,7 +51,7 @@ class _AddUserToCompanyState extends State<AddUserToCompany> {
     return Container(
       height: avaibleHeight * 0.30,
       //padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       alignment: Alignment.topCenter,
       child: Form(
         key: _formKey,
@@ -62,24 +61,23 @@ class _AddUserToCompanyState extends State<AddUserToCompany> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      labelText: 'Id do Usuário',
+                  decoration: const InputDecoration(
+                      labelText: 'Email do Usuário',
                       labelStyle: TextStyle(color: Colors.lightBlue),
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
                   onSaved: (newUserId) =>
-                      _authData['newUserId'] = newUserId ?? '',
+                      _authData['newUserEmail'] = newUserId ?? '',
                   validator: (_newUserId) {
                     final newUserId = _newUserId ?? '';
                     if (newUserId == '') {
-                      return 'Informe um Id válido';
+                      return 'Informe um Email válido';
                     }
                     return null;
                   },
                 )),
             ElevatedButton(
               onPressed: submit,
-              child: Text(
+              child: const Text(
                 'Adicionar',
               ),
               style: ElevatedButton.styleFrom(

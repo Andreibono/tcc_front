@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tcc_front/models/auth.dart';
+import 'package:tcc_front/screens/activities_screens/activity_project_report_filter.dart';
 import 'package:tcc_front/screens/activities_screens/activity_screen.dart';
 import 'package:tcc_front/screens/activities_screens/activity_user_list_screen.dart';
-import 'package:tcc_front/screens/company_screens/add_user_to_company_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_project_list_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_screen.dart';
 import 'package:tcc_front/screens/company_screens/company_users_list_screen.dart';
-import 'package:tcc_front/screens/project_screens/add_user_to_project_screen.dart';
 import 'package:tcc_front/screens/project_screens/project_screen.dart';
 import 'package:tcc_front/screens/project_screens/project_users_list_screen.dart';
 import 'package:tcc_front/util/app_routes.dart';
@@ -38,7 +37,8 @@ class MyApp extends StatelessWidget {
           AppRoutes.PROJECTUSERSLIST: (ctx) => ProjectUsersList(),
           AppRoutes.ACTIVITYSCREEN: (ctx) => ActivityScreen(),
           AppRoutes.ACTIVITYUSERLIST: (ctx) => ActivityUserList(),
-          AppRoutes.COMPANYPROJECTLIST: (ctx) => CompanyProjectsList()
+          AppRoutes.COMPANYPROJECTLIST: (ctx) => CompanyProjectsList(),
+          AppRoutes.ACTIVITYPROJECTREPORTSCREEN: (ctx) => ActivityProjectReportScreen(),
         },
       ),
     );

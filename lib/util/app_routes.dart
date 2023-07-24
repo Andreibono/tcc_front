@@ -22,5 +22,6 @@ class AppRoutes {
   static const ADDACTIVITYSCREEN = 'home/activity/new';
   static const ACTIVITYUSERLIST = 'home/activity/usersList';
   static const ACTIVITYREPORT = 'home/activity/usersList/report';
+  static const ACTIVITYPROJECTREPORTSCREEN = 'home/activity/projectreport';
 
 }

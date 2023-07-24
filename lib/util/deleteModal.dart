@@ -1,16 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tcc_front/models/auth.dart';
+
+import 'DialogUtils.dart';
 
 class DeleteModal extends StatelessWidget {
   final String type;
   var project;
   var company;
-  DeleteModal({Key? key, required this.type, this.project, this.company})
+  String tokenUser;
+  DeleteModal(
+      {Key? key,
+      required this.type,
+      this.project,
+      this.company,
+      required this.tokenUser})
       : super(key: key);
 
   @override
-  void submit() {}
-
   Widget build(BuildContext context) {
+    void submit() async {
+      String response;
+      Auth auth = Provider.of(context, listen: false);
+      response = type == "project"
+          ? await auth.deleteProject(project.id, tokenUser)
+          : await auth.deleteCompany(company.id, tokenUser);
+      if (response == '') {
+        type == "project"
+            ? DialogUtils.showCustomDialog(context,
+                title: "Sucesso", content: "Projeto deletado com sucesso!")
+            : DialogUtils.showCustomDialog(context,
+                title: "Sucesso", content: "Empresa deletada com sucesso!");
+      } else {
+        DialogUtils.showCustomDialog(context, title: "Erro", content: response);
+      }
+    }
+
+    ;
     void close() {
       Navigator.of(context).pop();
     }

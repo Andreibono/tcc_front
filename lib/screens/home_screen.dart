@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../components/drawer_custom.dart';
 import '../models/auth.dart';
+import '../models/report.dart';
 import '../models/user.dart';
 import '../util/DialogUtils.dart';
 
@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         //get das atividades do Usuário
         user = await auth.fetchActivities(user.token);
-      } 
-      else {
+
+      } else {
         //tratamento de erro
 
         DialogUtils.showCustomDialog(context,
@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
     var now = DateTime.now();
     print(now.month);
     print(now.weekday);
-
 
     return Scaffold(
       drawer: DrawerCustom(user: user),
