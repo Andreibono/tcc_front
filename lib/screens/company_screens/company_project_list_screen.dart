@@ -325,7 +325,7 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                                               color: Colors.white),
                                         )),
                                     onTap: () {
-                                      //ir para a página da empresa
+                                      //ir para a página do projeto
                                       Project project = Project(
                                           id: projectsList[index].id,
                                           name: projectsList[index].name,

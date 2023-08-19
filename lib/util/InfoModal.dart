@@ -37,9 +37,9 @@ class InfoModal extends StatelessWidget {
       Auth auth = Provider.of(context, listen: false);
       response = type == "user"
           ? await auth.deleteCompanyUsers(
-              user!.email, companyId, user?.token)
+              modalUser!.email, companyId, user?.token)
           : await auth.deleteProjectUsers(
-              user!.email, project?.id, user?.token);
+              modalUser!.email, project?.id, user?.token);
       if (response == '') {
         DialogUtils.showCustomDialog(context,
             title: "Sucesso", content: "Usuário deletado com sucesso!");

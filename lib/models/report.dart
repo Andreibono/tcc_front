@@ -7,13 +7,15 @@ class ReportInfo {
   String error = "";
   Activity? activity;
   Report? report;
+  var name;
 
-  ReportInfo({this.id, this.activity, this.report});
+  ReportInfo({this.id, this.activity, this.report, this.name});
 
   factory ReportInfo.fromJson(Map jsonResponse) {
     return jsonResponse['report'] is String
         ? ReportInfo(
             id: jsonResponse['id'].toString(),
+            name: jsonResponse['activity']['user']['name'],
             report: Report.fromJson(json.decode(jsonResponse['report'])),
           )
         : ReportInfo(

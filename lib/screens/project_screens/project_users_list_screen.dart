@@ -6,6 +6,7 @@ import '/components/app_bar_custom.dart';
 import '/models/auth.dart';
 import '/models/user.dart';
 import '../../models/project.dart';
+import '../../util/DialogUtils.dart';
 import '../../util/InfoModal.dart';
 import '../../util/app_routes.dart';
 import '../../util/colors.dart';
@@ -82,7 +83,14 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
         });
       } else {
         //tratamento de erro ao listar usuários do projeto
-        //DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
+        setState(() {
+          loading = false;
+          Navigator.pop(context);
+          DialogUtils.showCustomDialog(context,
+              title: "Erro",
+              content: 'Você não pertence a este projeto',
+              nullpop: false);
+        });
       }
     }
 
@@ -163,7 +171,7 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                 onTap: () {
                   Navigator.of(context).pushNamed(
                       AppRoutes.ACTIVITYPROJECTREPORTSCREEN,
-                                arguments: {'user': user, 'project': project});
+                      arguments: {'user': user, 'project': project});
                 },
               ),
             ),
@@ -214,7 +222,8 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                         child: Row(
                           children: [
                             Text(
-                              "Nome: ${usersList[index].name}, Id: ${usersList[index].id}, email: ${usersList[index].email}",
+                              "Nome: ${usersList[index].name}\n\n"
+                              "email: ${usersList[index].email}",
                               //style: TextStyle(color: Colors.white),
                             )
                           ],

@@ -102,7 +102,8 @@ class _CompanyUsersListState extends State<CompanyUsersList> {
                         child: Row(
                           children: [
                             Text(
-                              "Nome: ${usersList[userIndex].user.name}, Id: ${usersList[userIndex].user.id}, Role: ${usersList[userIndex].role}",
+                              "Nome: ${usersList[userIndex].user.name}\n\n"
+                              "Role: ${usersList[userIndex].role}",
                               //style: TextStyle(color: Colors.white),
                             )
                           ],
