@@ -115,6 +115,7 @@ class _CompanyProjectsListState extends State<CompanyProjectsList> {
                           type: "company",
                           company: user.company_list[index].company,
                           tokenUser: user.token,
+                          user: user,
                         ),
                       )
                     ],

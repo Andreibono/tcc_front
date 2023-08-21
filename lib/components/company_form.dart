@@ -6,8 +6,9 @@ import '../models/user.dart';
 import '../util/DialogUtils.dart';
 
 class CompanyForm extends StatefulWidget {
-  final User user;
-  const CompanyForm({required this.user, Key? key}) : super(key: key);
+  User user;
+  bool isloading = false;
+  CompanyForm({required this.user, Key? key}) : super(key: key);
 
   @override
   State<CompanyForm> createState() => CompanyFormState();
@@ -23,23 +24,33 @@ class CompanyFormState extends State<CompanyForm> {
     };
 
     Future<void> submit() async {
+      setState(() {
+        widget.isloading = true;
+      });
       final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
 
       if (!isValid) {
+        setState(() {
+          widget.isloading = false;
+        });
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.companySingup(_authData['fantasyName']!,
+      widget.user = await auth.companySingup(_authData['fantasyName']!,
           _authData['CNPJ']!, widget.user.token.toString());
-      if (resposta == '') {
+      if (widget.user.error_message == '') {
         //empresa cadastrada com sucesso
         DialogUtils.showCustomDialog(context,
             title: "Sucesso", content: "Empresa Cadastrada com Sucesso!");
       } else {
         //tratamento de erro ao cadastrar empresa
-        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: widget.user.error_message);
       }
+      setState(() {
+        widget.isloading = false;
+      });
     }
 
     return Container(
@@ -86,17 +97,19 @@ class CompanyFormState extends State<CompanyForm> {
                     return null;
                   },
                 )),
-            ElevatedButton(
-              onPressed: submit,
-              child: const Text(
-                'Cadastrar',
-              ),
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 8)),
-            ),
+            widget.isloading == true
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: submit,
+                    child: const Text(
+                      'Cadastrar',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 8)),
+                  )
           ],
         ),
       ),

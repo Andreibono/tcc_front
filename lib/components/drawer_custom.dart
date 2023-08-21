@@ -6,7 +6,7 @@ import '../util/app_routes.dart';
 class DrawerCustom extends StatelessWidget {
   final User user;
 
- const DrawerCustom({Key? key, required this.user}) : super(key: key);
+  const DrawerCustom({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Drawer(
@@ -19,21 +19,26 @@ class DrawerCustom extends StatelessWidget {
 
   Widget buildHeader(BuildContext context) => Material(
       color: Colors.blue.shade700,
-      child: InkWell(onTap: (){
-        //navegação para a tela do usuário
-      },
-      child: Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 24),
-      child: Column(
-        children: [
-          const CircleAvatar(
-            radius: 52,
-            backgroundColor: Colors.grey,
-          ),
-          Text(user.name, style: const TextStyle(fontSize: 28, color: Colors.white)),
-          Text(user.email, style: const TextStyle(fontSize: 16, color: Colors.white))
-        ],
-      ))));
+      child: InkWell(
+          onTap: () {
+            //navegação para a tela do usuário
+          },
+          child: Container(
+              padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top, bottom: 24),
+              child: Column(
+                children: [
+                  const CircleAvatar(
+                    radius: 52,
+                    backgroundColor: Colors.grey,
+                  ),
+                  Text(user.name,
+                      style:
+                          const TextStyle(fontSize: 28, color: Colors.white)),
+                  Text(user.email,
+                      style: const TextStyle(fontSize: 16, color: Colors.white))
+                ],
+              ))));
 
   Widget buildMenuItems(BuildContext context) => Container(
         padding: const EdgeInsets.all(30),
@@ -60,12 +65,14 @@ class DrawerCustom extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
+                Navigator.pop(context);
                 Navigator.of(context)
                     .pushNamed(AppRoutes.COMPANYSCREEN, arguments: user);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.assignment_outlined, color: Colors.white),
+              leading:
+                  const Icon(Icons.assignment_outlined, color: Colors.white),
               title: const Text(
                 'Meus Projetos',
                 style: TextStyle(color: Colors.white),

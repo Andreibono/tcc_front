@@ -6,8 +6,8 @@ import '/models/user.dart';
 import '../../util/DialogUtils.dart';
 
 class NewProjectScreen extends StatefulWidget {
-  final User user;
-  const NewProjectScreen({required this.user, Key? key}) : super(key: key);
+  User user;
+  NewProjectScreen({required this.user, Key? key}) : super(key: key);
 
   @override
   State<NewProjectScreen> createState() => _NewProjectScreenState();
@@ -18,6 +18,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   String? companySelected;
   int companySelectedIndex = -1;
   static final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,26 +40,36 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     };
 
     Future<void> submit() async {
+      setState(() {
+        isLoading = true;
+      });
       final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
 
       if (!isValid) {
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.projectSingup(
+      widget.user = await auth.projectSingup(
           _authData['projectName']!,
           _authData['description']!,
           widget.user.token.toString(),
           widget.user.company_list[companySelectedIndex].company.id);
-      if (resposta == '') {
+      if (widget.user.error_message == '') {
         //projeto cadastrado com sucesso
         DialogUtils.showCustomDialog(context,
             title: "Sucesso!", content: 'Projeto Cadastrado com Sucesso!');
       } else {
         //tratamento de erro ao cadastrar projeto
-        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: widget.user.error_message);
       }
+      setState(() {
+        isLoading = false;
+      });
     }
 
     final avaibleWidth = MediaQuery.of(context).size.width;
@@ -126,17 +137,19 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 )),
             Visibility(
                 visible: buttomCheck,
-                child: ElevatedButton(
-                  onPressed: submit,
-                  child: Text(
-                    'Salvar',
-                  ),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 8)),
-                ))
+                child: isLoading == true
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: submit,
+                        child: const Text(
+                          'Salvar',
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 8)),
+                      ))
           ],
         ),
       ),

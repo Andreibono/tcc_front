@@ -61,7 +61,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
     final appBar = AppBarCustom(
       title: user.name,
       check: true,
-      onTapFunction: () {
+      onTapFunction: () async {
         showModalBottomSheet(
           context: context,
           builder: (_) {

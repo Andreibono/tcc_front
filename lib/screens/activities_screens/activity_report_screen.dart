@@ -9,10 +9,10 @@ import '../../models/user.dart';
 import '../../util/DialogUtils.dart';
 
 class ActivityReportScreen extends StatefulWidget {
-  final User user;
+  User user;
   static final _formKey = GlobalKey<FormState>();
   final Activity? activity;
-  const ActivityReportScreen(
+  ActivityReportScreen(
       {Key? key, int? index, required this.user, required this.activity})
       : super(key: key);
 
@@ -58,30 +58,40 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
     }
 
     Future<void> submitReport() async {
+      setState(() {
+        _isLoading = false;
+      });
       final isValid =
           ActivityReportScreen._formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
 
       if (!isValid) {
+        setState(() {
+          _isLoading = true;
+        });
         return;
       }
       ActivityReportScreen._formKey.currentState?.save();
 
-      var resposta = await auth.sendReport(
+      widget.user = await auth.sendReport(
           _authData['iDid']!,
           _authData['willDo']!,
           _authData['difficulty']!,
           widget.user.open_activity.toString(),
           time(),
           widget.user.token.toString());
-      if (resposta == '') {
+      if (widget.user.error_message == '') {
         //Relatório enviado com sucesso
         DialogUtils.showCustomDialog(context,
             title: "Sucesso!", content: "Relatório enviado com sucesso!");
       } else {
         //tratamento de erro ao enviar relatório
-        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: widget.user.error_message);
       }
+      setState(() {
+        _isLoading = true;
+      });
     }
 
     Future<void> submitFetchReport() async {
@@ -265,85 +275,84 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
               )
         :
         // Relátio ainda em aberto, modal para envio
-        Expanded(
-            child: Container(
-              height: 350,
-              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-              child: Form(
-                key: ActivityReportScreen._formKey,
-                child: Column(
-                  children: [
-                    Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: 'O que você fez nessa atividade? ',
-                              labelStyle: TextStyle(color: Colors.lightBlue),
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(10, 20, 20, 20)),
-                          onChanged: (iDid) => '',
-                          onSaved: (iDid) => _authData['iDid'] = iDid ?? '',
-                          validator: (_fantasyName) {
-                            final fantasyName = _fantasyName;
-                            if (fantasyName == '' || fantasyName!.isEmpty) {
-                              return 'Descreva o que você fez nessa atividade.';
-                            }
-                            return null;
-                          },
-                        )),
-                    Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: 'O que você fará a seguir?',
-                              labelStyle: TextStyle(color: Colors.lightBlue),
-                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                          onChanged: (willDo) => '',
-                          onSaved: (willDo) =>
-                              _authData['willDo'] = willDo ?? '',
-                          validator: (_willDo) {
-                            final willDo = _willDo ?? '';
-                            if (willDo == '') {
-                              return 'Descreva o que você fará em seguida.';
-                            }
-                            return null;
-                          },
-                        )),
-                    Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              labelText:
-                                  'Descreva as dificuldades que você teve.',
-                              labelStyle: TextStyle(color: Colors.lightBlue),
-                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                          onChanged: (difficulty) => '',
-                          onSaved: (difficulty) =>
-                              _authData['difficulty'] = difficulty ?? '',
-                          validator: (_difficulty) {
-                            final difficulty = _difficulty ?? '';
-                            if (difficulty == '') {
-                              return 'Descreva as suas dificuldades durante a atividade realizada.';
-                            }
-                            return null;
-                          },
-                        )),
-                    ElevatedButton(
-                      onPressed: submitReport,
-                      child: const Text(
-                        'Enviar Relatório',
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 8)),
-                    ),
-                  ],
-                ),
+        Container(
+            height: 350,
+            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+            child: Form(
+              key: ActivityReportScreen._formKey,
+              child: Column(
+                children: [
+                  Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'O que você fez nessa atividade? ',
+                            labelStyle: TextStyle(color: Colors.lightBlue),
+                            contentPadding:
+                                EdgeInsets.fromLTRB(10, 20, 20, 20)),
+                        onChanged: (iDid) => '',
+                        onSaved: (iDid) => _authData['iDid'] = iDid ?? '',
+                        validator: (_fantasyName) {
+                          final fantasyName = _fantasyName;
+                          if (fantasyName == '' || fantasyName!.isEmpty) {
+                            return 'Descreva o que você fez nessa atividade.';
+                          }
+                          return null;
+                        },
+                      )),
+                  Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'O que você fará a seguir?',
+                            labelStyle: TextStyle(color: Colors.lightBlue),
+                            contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                        onChanged: (willDo) => '',
+                        onSaved: (willDo) => _authData['willDo'] = willDo ?? '',
+                        validator: (_willDo) {
+                          final willDo = _willDo ?? '';
+                          if (willDo == '') {
+                            return 'Descreva o que você fará em seguida.';
+                          }
+                          return null;
+                        },
+                      )),
+                  Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText:
+                                'Descreva as dificuldades que você teve.',
+                            labelStyle: TextStyle(color: Colors.lightBlue),
+                            contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                        onChanged: (difficulty) => '',
+                        onSaved: (difficulty) =>
+                            _authData['difficulty'] = difficulty ?? '',
+                        validator: (_difficulty) {
+                          final difficulty = _difficulty ?? '';
+                          if (difficulty == '') {
+                            return 'Descreva as suas dificuldades durante a atividade realizada.';
+                          }
+                          return null;
+                        },
+                      )),
+                  _isLoading
+                      ? ElevatedButton(
+                          onPressed: submitReport,
+                          child: const Text(
+                            'Enviar Relatório',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 8)),
+                        )
+                      : const CircularProgressIndicator()
+                ],
               ),
             ),
           );

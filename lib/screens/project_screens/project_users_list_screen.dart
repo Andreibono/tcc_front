@@ -53,6 +53,7 @@ class _ProjectUsersListState extends State<ProjectUsersList> {
                           type: "project",
                           project: project,
                           tokenUser: user.token,
+                          user: user,
                         ),
                       )
                     ],

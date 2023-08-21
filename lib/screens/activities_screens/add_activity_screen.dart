@@ -6,9 +6,9 @@ import '../../models/user.dart';
 import '../../util/DialogUtils.dart';
 
 class NewActivityScreen extends StatefulWidget {
-  final User user;
+  User user;
   final String? projectId;
-  const NewActivityScreen({required this.user, this.projectId, Key? key})
+  NewActivityScreen({required this.user, this.projectId, Key? key})
       : super(key: key);
 
   @override
@@ -20,6 +20,7 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
   String? projectSelected;
   int projectSelectedIndex = -1;
   static final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,27 +41,37 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
     };
 
     Future<void> submit() async {
+      setState(() {
+        isLoading = true;
+      });
       final isValid = _formKey.currentState?.validate() ?? false;
       Auth auth = Provider.of(context, listen: false);
       String projectId = widget.projectId ??
           widget.user.projectsList[projectSelectedIndex].project.id;
 
       if (!isValid) {
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
       _formKey.currentState?.save();
-      var resposta = await auth.activitySingup(_authData['activityName']!,
+      widget.user = await auth.activitySingup(_authData['activityName']!,
           _authData['description']!, widget.user.token.toString(), projectId);
-      print('resposta: $resposta');
-      if (resposta == '') {
+
+      if (widget.user.error_message == '') {
         //Atividade cadastrada com sucesso
         await auth.putWorking(widget.user.token);
         DialogUtils.showCustomDialog(context,
             title: "Sucesso", content: "Atividade Iniciada, Bom Trabalho!");
       } else {
-        DialogUtils.showCustomDialog(context, title: "Erro", content: resposta);
+        DialogUtils.showCustomDialog(context,
+            title: "Erro", content: widget.user.error_message);
         //tratamento de erro ao cadastrar uma nova atividade
       }
+      setState(() {
+        isLoading = false;
+      });
     }
 
     //final avaibleHeight = MediaQuery.of(context).size.height;
@@ -132,17 +143,19 @@ class _NewActivityScreenState extends State<NewActivityScreen> {
             widget.projectId == null
                 ? Visibility(
                     visible: buttomCheck,
-                    child: ElevatedButton(
-                      onPressed: submit,
-                      child: const Text(
-                        'Salvar',
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 8)),
-                    ))
+                    child: isLoading == true
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: submit,
+                            child: const Text(
+                              'Salvar',
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 8)),
+                          ))
                 : ElevatedButton(
                     onPressed: submit,
                     child: const Text(

@@ -81,35 +81,6 @@ class Auth with ChangeNotifier {
     return user;
   }
 
-  Future companySingup(
-      String fantasyName, String cnpj, String tolkienUser) async {
-    var errorMessage = '';
-    try {
-      final headerToken = <String, String>{
-        'Authorization': 'Bearer $tolkienUser'
-      };
-      requestHeadears.addEntries(headerToken.entries);
-      var response = await http
-          .post(Uri.parse('$url/company'),
-              body: jsonEncode(
-                {
-                  "fantasia": fantasyName,
-                  "cnpj_cpf": cnpj,
-                },
-              ),
-              headers: requestHeadears)
-          .then((response) {
-        if (response.statusCode == 201) {
-        } else {
-          errorMessage = jsonDecode(response.body).toString();
-        }
-      });
-    } catch (e) {
-      errorMessage = e.toString();
-    }
-    return (errorMessage);
-  }
-
   Future<User> fetchCompanies(String tokenUser) async {
     user.company_list.clear();
     List<CompanyInfo> companiesList;
@@ -138,6 +109,38 @@ class Auth with ChangeNotifier {
       print('erro: $e');
     }
     return user;
+  }
+
+  Future<User> companySingup(
+      String fantasyName, String cnpj, String tolkienUser) async {
+    user.error_message = '';
+    var errorMessage = '';
+    try {
+      final headerToken = <String, String>{
+        'Authorization': 'Bearer $tolkienUser'
+      };
+      requestHeadears.addEntries(headerToken.entries);
+      var response = await http
+          .post(Uri.parse('$url/company'),
+              body: jsonEncode(
+                {
+                  "fantasia": fantasyName,
+                  "cnpj_cpf": cnpj,
+                },
+              ),
+              headers: requestHeadears)
+          .then((response) async {
+        if (response.statusCode == 201) {
+          user = await fetchCompanies(tolkienUser);
+        } else {
+          user.error_message = jsonDecode(response.body).toString();
+        }
+      });
+    } catch (e) {
+      user.error_message = e.toString();
+    }
+
+    return (user);
   }
 
   Future<String> addUserCompany(
@@ -224,9 +227,9 @@ class Auth with ChangeNotifier {
     return projectList;
   }
 
-  Future projectSingup(String projectName, String description,
+  Future<User> projectSingup(String projectName, String description,
       String tolkienUser, String companyId) async {
-    var errorMessage = '';
+    user.error_message = '';
 
     try {
       final headerToken = <String, String>{
@@ -244,17 +247,17 @@ class Auth with ChangeNotifier {
                 },
               ),
               headers: requestHeadears)
-          .then((response) {
+          .then((response) async {
         if (response.statusCode == 200) {
-          print("Projeto Cadastrado com Sucesso!");
+          user = await fetchProjects(tolkienUser);
         } else {
-          errorMessage = jsonDecode(response.body).toString();
+          user.error_message = jsonDecode(response.body).toString();
         }
       });
     } catch (e) {
-      errorMessage = e.toString();
+      user.error_message = e.toString();
     }
-    return (errorMessage);
+    return (user);
   }
 
   Future<User> fetchProjects(String tokenUser) async {
@@ -342,9 +345,9 @@ class Auth with ChangeNotifier {
     return usersList;
   }
 
-  Future activitySingup(String activityName, String description,
+  Future<User> activitySingup(String activityName, String description,
       String tokenUser, String projectId) async {
-    var errorMessage = '';
+    user.error_message = '';
 
     try {
       final headerToken = <String, String>{
@@ -361,16 +364,17 @@ class Auth with ChangeNotifier {
                 },
               ),
               headers: requestHeadears)
-          .then((response) {
+          .then((response) async {
         if (response.statusCode == 201) {
+          user = await fetchActivities(tokenUser);
         } else {
-          errorMessage = jsonDecode(response.body).toString();
+          user.error_message = jsonDecode(response.body).toString();
         }
       });
     } catch (e) {
-      errorMessage = e.toString();
+      user.error_message = e.toString();
     }
-    return (errorMessage);
+    return (user);
   }
 
   Future<User> fetchActivities(String tokenUser) async {
@@ -403,9 +407,9 @@ class Auth with ChangeNotifier {
     return user;
   }
 
-  Future<String> sendReport(String iDid, String willDo, String difficulty,
+  Future<User> sendReport(String iDid, String willDo, String difficulty,
       String activity, String end, String tokenUser) async {
-    String resposta = '';
+    user.error_message = '';
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -425,17 +429,18 @@ class Auth with ChangeNotifier {
                 },
               ),
               headers: requestHeadears)
-          .then((response) {
+          .then((response) async {
         if (response.statusCode == 200) {
-          return resposta;
+
+          user =  await fetchActivities(tokenUser);
         } else {
-          resposta = (jsonDecode(response.body).toString());
+          user.error_message = (jsonDecode(response.body).toString());
         }
       });
     } catch (e) {
-      resposta = ('erro: $e');
+      user.error_message = ('erro: $e');
     }
-    return resposta;
+    return user;
   }
 
   Future<String> putWorking(String tokenUser) async {
@@ -542,8 +547,8 @@ class Auth with ChangeNotifier {
     return resposta;
   }
 
-  Future<String> deleteCompany(String? companyId, String? tokenUser) async {
-    var resposta = '';
+  Future<User> deleteCompany(String? companyId, String tokenUser) async {
+    user.error_message = '';
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -554,17 +559,18 @@ class Auth with ChangeNotifier {
           headers: requestHeadears);
 
       if (response.statusCode == 200) {
+        user = await fetchCompanies(tokenUser);
       } else {
-        resposta = jsonDecode(response.body).toString();
+        user.error_message = jsonDecode(response.body).toString();
       }
     } catch (e) {
-      resposta = "erro: $e";
+      user.error_message = "erro: $e";
     }
-    return resposta;
+    return user;
   }
 
-  Future<String> deleteProject(String? projectId, String? tokenUser) async {
-    var resposta = '';
+  Future<User> deleteProject(String? projectId, String tokenUser) async {
+    user.error_message = '';
     try {
       final headerToken = <String, String>{
         'Authorization': 'Bearer $tokenUser'
@@ -575,13 +581,14 @@ class Auth with ChangeNotifier {
           headers: requestHeadears);
 
       if (response.statusCode == 200) {
+        user = await fetchProjects(tokenUser);
       } else {
-        resposta = jsonDecode(response.body).toString();
+        user.error_message = jsonDecode(response.body).toString();
       }
     } catch (e) {
-      resposta = "erro: $e";
+      user.error_message = "erro: $e";
     }
-    return resposta;
+    return user;
   }
 
   Future<List<ReportInfo>> fetchReportsFilter(
